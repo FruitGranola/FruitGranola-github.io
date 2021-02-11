@@ -873,7 +873,1063 @@
 <div class="container">
 <div class="row row-offcanvas row-offcanvas-right">
 <div class="contents col-xs-12 col-md-10">
-<p>最終更新日: 2021-02-10 23:43:22</p>
+<p>最終更新日: 2021-02-11 19:19:14</p>
+<button>
+<a href="index.html">Homeに戻る</a>
+</button>
+<style>
+  
+  table, td, th {
+    border: none;
+    padding-left: 1em;
+    padding-right: 1em;
+    min-width: 75%;
+    margin-left: auto;
+    margin-right: auto;
+    margin-top: 1em;
+    margin-bottom: 1em;
+  }
+
+</style>
+<h1 id="使用するパッケージ">使用するパッケージ</h1>
+<div class="row">
+<button class="source R toggle btn btn-xs btn-primary">
+<span class="glyphicon glyphicon-chevron-down"></span> R source
+</button>
+<pre style=""><code class="source r">library(tidyverse)
+library(magrittr)
+library(stargazer)
+library(ROCR)
+library(broom)
+library(margins)
+
+theme_set(theme_minimal(base_family = 15))</code></pre>
+</div>
+<h1 id="使用するデータ">使用するデータ</h1>
+<div class="row">
+<button class="source R toggle btn btn-xs btn-primary">
+<span class="glyphicon glyphicon-chevron-down"></span> R source
+</button>
+<pre style=""><code class="source r">data <- read_csv("Data/House_of_Councilors_1996_2017.csv")</code></pre>
+</div>
+<div class="row">
+<button class="source R toggle btn btn-xs btn-primary">
+<span class="glyphicon glyphicon-chevron-down"></span> R source
+</button>
+<pre style=""><code class="source r">data %<>% 
+  filter(year == 2005) %>% 
+  mutate("ldp" = if_else(party_jpn %in%  c("自民党"), 1, 0)) %>% 
+  drop_na() %>% 
+  as.data.frame()</code></pre>
+</div>
+<h1 id="分析をする流れ">分析をする流れ</h1>
+<ol style="list-style-type: decimal">
+<li>分析の目的を設定する<br />
+</li>
+<li>理論と仮説<br />
+</li>
+<li>変数選択<br />
+3-1.従属変数を設定<br />
+3-2. 独立変数の設定<br />
+</li>
+<li>ロジスティック帰分析<br />
+4-1. ロジスティック回帰分析の実行<br />
+4-2. モデルの診断<br />
+4-3. 点・区間推定の可視化<br />
+4-4. 予測確率・限界効果の可視化<br />
+</li>
+<li>分析結果の解釈</li>
+</ol>
+<h1 id="分析の目的を設定する">1. 分析の目的を設定する</h1>
+<p>ロジスティック回帰分析を使って分析をする場合は2値変数が従属変数になる現象を探す必要がある。 計量政治学の世界では選挙の当選・落選を0、1で表現し、ロジスティック回帰分析を行うことがよくある。</p>
+<p>今回は選挙研究を事例にロジスティック回帰分析の流れを紹介する。 そのうえで、「選挙の当落結果に選挙費用が与える影響」を推定することを目的とする。</p>
+<h1 id="理論と仮説">2. 理論と仮説</h1>
+<p>変数選択をする際は、リサーチクエスチョンからどのような理論を立てられるのか。 そして、この理論を実証するには、どのような仮説を立てて検証するべきかを考える必要がある。 そのため、理論と仮説の設定がとても重要だ。</p>
+<blockquote>
+<p>理論:<br />
+選挙に金をかけると「スタッフの増員」・「選挙カーの使用」などが可能になり、当選確率が高くなる</p>
+</blockquote>
+<p>上記の理論が正しければ、以下のような仮説が立てられる。</p>
+<blockquote>
+<p>仮説:<br />
+選挙費用が多ければ多いほど、当選確率が高い</p>
+</blockquote>
+<h1 id="変数選択">3. 変数選択</h1>
+<div class="row">
+<button class="source R toggle btn btn-xs btn-primary">
+<span class="glyphicon glyphicon-chevron-down"></span> R source
+</button>
+<pre style=""><code class="source r"># 要約統計量をHTMLで出力する。
+# チャンクオプションにresults='asis'を忘れないように
+
+data %>% 
+  stargazer(type = "html",
+            summary.stat = c("n", "sd", "min", "mean", "max"), 
+            title = "要約統計量",
+            align = T)</code></pre>
+<table style="text-align:center">
+<caption>
+<strong>要約統計量</strong>
+</caption>
+<tr>
+<td colspan="6" style="border-bottom: 1px solid black">
+</td>
+</tr>
+<tr>
+<td style="text-align:left">
+Statistic
+</td>
+<td>
+N
+</td>
+<td>
+St. Dev.
+</td>
+<td>
+Min
+</td>
+<td>
+Mean
+</td>
+<td>
+Max
+</td>
+</tr>
+<tr>
+<td colspan="6" style="border-bottom: 1px solid black">
+</td>
+</tr>
+<tr>
+<td style="text-align:left">
+year
+</td>
+<td>
+985
+</td>
+<td>
+0.000
+</td>
+<td>
+2,005
+</td>
+<td>
+2,005.000
+</td>
+<td>
+2,005
+</td>
+</tr>
+<tr>
+<td style="text-align:left">
+kun
+</td>
+<td>
+985
+</td>
+<td>
+4.924
+</td>
+<td>
+1
+</td>
+<td>
+5.564
+</td>
+<td>
+25
+</td>
+</tr>
+<tr>
+<td style="text-align:left">
+status
+</td>
+<td>
+985
+</td>
+<td>
+0.588
+</td>
+<td>
+0
+</td>
+<td>
+0.516
+</td>
+<td>
+2
+</td>
+</tr>
+<tr>
+<td style="text-align:left">
+party_code
+</td>
+<td>
+985
+</td>
+<td>
+24.728
+</td>
+<td>
+1
+</td>
+<td>
+9.497
+</td>
+<td>
+100
+</td>
+</tr>
+<tr>
+<td style="text-align:left">
+previous
+</td>
+<td>
+985
+</td>
+<td>
+2.684
+</td>
+<td>
+0
+</td>
+<td>
+1.922
+</td>
+<td>
+16
+</td>
+</tr>
+<tr>
+<td style="text-align:left">
+wl
+</td>
+<td>
+985
+</td>
+<td>
+0.697
+</td>
+<td>
+0
+</td>
+<td>
+0.540
+</td>
+<td>
+2
+</td>
+</tr>
+<tr>
+<td style="text-align:left">
+voteshare
+</td>
+<td>
+985
+</td>
+<td>
+19.205
+</td>
+<td>
+1
+</td>
+<td>
+30.354
+</td>
+<td>
+74
+</td>
+</tr>
+<tr>
+<td style="text-align:left">
+age
+</td>
+<td>
+985
+</td>
+<td>
+10.877
+</td>
+<td>
+25
+</td>
+<td>
+50.305
+</td>
+<td>
+81
+</td>
+</tr>
+<tr>
+<td style="text-align:left">
+nocand
+</td>
+<td>
+985
+</td>
+<td>
+0.737
+</td>
+<td>
+2
+</td>
+<td>
+3.432
+</td>
+<td>
+6
+</td>
+</tr>
+<tr>
+<td style="text-align:left">
+rank
+</td>
+<td>
+985
+</td>
+<td>
+1.033
+</td>
+<td>
+1
+</td>
+<td>
+2.214
+</td>
+<td>
+6
+</td>
+</tr>
+<tr>
+<td style="text-align:left">
+vote
+</td>
+<td>
+985
+</td>
+<td>
+45,693.650
+</td>
+<td>
+1,557
+</td>
+<td>
+68,872.310
+</td>
+<td>
+197,037
+</td>
+</tr>
+<tr>
+<td style="text-align:left">
+eligible
+</td>
+<td>
+985
+</td>
+<td>
+63,990.150
+</td>
+<td>
+214,235
+</td>
+<td>
+344,626.400
+</td>
+<td>
+465,181
+</td>
+</tr>
+<tr>
+<td style="text-align:left">
+turnout
+</td>
+<td>
+985
+</td>
+<td>
+3.896
+</td>
+<td>
+57.400
+</td>
+<td>
+67.663
+</td>
+<td>
+79.600
+</td>
+</tr>
+<tr>
+<td style="text-align:left">
+exp
+</td>
+<td>
+985
+</td>
+<td>
+5,569,641.000
+</td>
+<td>
+62,710
+</td>
+<td>
+8,142,244.000
+</td>
+<td>
+24,649,710
+</td>
+</tr>
+<tr>
+<td style="text-align:left">
+expm
+</td>
+<td>
+985
+</td>
+<td>
+5.570
+</td>
+<td>
+0.063
+</td>
+<td>
+8.142
+</td>
+<td>
+24.650
+</td>
+</tr>
+<tr>
+<td style="text-align:left">
+vs
+</td>
+<td>
+985
+</td>
+<td>
+0.192
+</td>
+<td>
+0.006
+</td>
+<td>
+0.304
+</td>
+<td>
+0.736
+</td>
+</tr>
+<tr>
+<td style="text-align:left">
+exppv
+</td>
+<td>
+985
+</td>
+<td>
+17.907
+</td>
+<td>
+0.148
+</td>
+<td>
+24.627
+</td>
+<td>
+89.332
+</td>
+</tr>
+<tr>
+<td style="text-align:left">
+smd
+</td>
+<td>
+985
+</td>
+<td>
+0.460
+</td>
+<td>
+0
+</td>
+<td>
+0.303
+</td>
+<td>
+1
+</td>
+</tr>
+<tr>
+<td style="text-align:left">
+ldp
+</td>
+<td>
+985
+</td>
+<td>
+0.456
+</td>
+<td>
+0
+</td>
+<td>
+0.293
+</td>
+<td>
+1
+</td>
+</tr>
+<tr>
+<td colspan="6" style="border-bottom: 1px solid black">
+</td>
+</tr>
+</table>
+</div>
+<table>
+<thead>
+<tr class="header">
+<th>変数名</th>
+<th>内容 　</th>
+<th>備考</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>year</td>
+<td>実施年 　</td>
+<td></td>
+</tr>
+<tr class="even">
+<td>ku</td>
+<td>都道府県</td>
+<td></td>
+</tr>
+<tr class="odd">
+<td>kun</td>
+<td>区域 　</td>
+<td></td>
+</tr>
+<tr class="even">
+<td>status</td>
+<td>現職か否か</td>
+<td>0 = 新人・元, 1 = 現職</td>
+</tr>
+<tr class="odd">
+<td>name</td>
+<td>名前</td>
+<td></td>
+</tr>
+<tr class="even">
+<td>party</td>
+<td>所属政党</td>
+<td>ローマ字での略語</td>
+</tr>
+<tr class="odd">
+<td>party_code</td>
+<td>所属政党</td>
+<td>数字で通し番号</td>
+</tr>
+<tr class="even">
+<td>previous</td>
+<td>当選回数</td>
+<td></td>
+</tr>
+<tr class="odd">
+<td>wl</td>
+<td>当落結果　</td>
+<td>0 = 落選, 1 = 当選, 2 = 復活当選</td>
+</tr>
+<tr class="even">
+<td>voteshare</td>
+<td>得票率</td>
+<td>単位: %</td>
+</tr>
+<tr class="odd">
+<td>age</td>
+<td>年齢</td>
+<td></td>
+</tr>
+<tr class="even">
+<td>nocand</td>
+<td>候補者数</td>
+<td></td>
+</tr>
+<tr class="odd">
+<td>rank</td>
+<td>順位　　　</td>
+<td></td>
+</tr>
+<tr class="even">
+<td>vote</td>
+<td>得票数　　</td>
+<td></td>
+</tr>
+<tr class="odd">
+<td>eligible</td>
+<td>有権者数</td>
+<td></td>
+</tr>
+<tr class="even">
+<td>turnout</td>
+<td>投票率</td>
+<td>単位: %</td>
+</tr>
+<tr class="odd">
+<td>exp</td>
+<td>選挙費用</td>
+<td>単位: 円</td>
+</tr>
+<tr class="even">
+<td>expm</td>
+<td>選挙費用　</td>
+<td>単位: 百万円</td>
+</tr>
+<tr class="odd">
+<td>vs</td>
+<td>得票割合</td>
+<td>小数で表記</td>
+</tr>
+<tr class="even">
+<td>exppv</td>
+<td>選挙費用</td>
+<td>単位: 円（有権者一人当たりの選挙費用）</td>
+</tr>
+<tr class="odd">
+<td>smd</td>
+<td>当落</td>
+<td>0 = 落選, 1 = 当選</td>
+</tr>
+<tr class="even">
+<td>party_jpn</td>
+<td>所属政党　</td>
+<td>日本語</td>
+</tr>
+</tbody>
+</table>
+<h2 id="従属変数の設定">3-1. 従属変数の設定</h2>
+<blockquote>
+<p>従属変数: smd（当落）</p>
+</blockquote>
+<p>今回は明確に従属変数にする変数が決められる。 しかし、ビジネスの世界ではKPIの設定が難しい。 1つ言えることは、「良い結果を出すために恣意的に従属変数を選択することはやめよう」ということのみだ。</p>
+<h2 id="独立変数の設定">3-2. 独立変数の設定</h2>
+<blockquote>
+<p>独立変数: exppv（選挙費用 単位: 百万）</p>
+</blockquote>
+<p>これも選挙費用で考える余地なし。</p>
+<h1 id="ロジスティック回帰分析">4. ロジスティック回帰分析</h1>
+<h2 id="ロジスティック回帰分析の実行">4-1. ロジスティック回帰分析の実行</h2>
+<p>これが本分析のモデルだ。</p>
+<div class="row">
+<button class="source R toggle btn btn-xs btn-primary">
+<span class="glyphicon glyphicon-chevron-down"></span> R source
+</button>
+<pre style=""><code class="source r">model <- glm(smd ~ expm + previous + ldp, data = data, family = binomial(link = "logit"))</code></pre>
+</div>
+<p>独立変数の推定値や統計的に有意であることが統制変数を組み込んでいくことでどのように変化するか確認するために、 以下のようなロジスティック回帰分析を一緒に表に併記する。</p>
+<div class="row">
+<button class="source R toggle btn btn-xs btn-primary">
+<span class="glyphicon glyphicon-chevron-down"></span> R source
+</button>
+<pre style=""><code class="source r">lm1 <- glm(smd ~ expm, data = data, family = binomial(link = "logit"))
+lm2 <- glm(smd ~ expm + previous, data = data, family = binomial(link = "logit"))</code></pre>
+</div>
+<p>統制変数を増やしていくと推定値が徐々に小さくなっていき、AICが小さくなっている。 当選回数と自民党ダミーが選挙費用と交絡関係になっていたことが理解できると思う。</p>
+<div class="row">
+<button class="source R toggle btn btn-xs btn-primary">
+<span class="glyphicon glyphicon-chevron-down"></span> R source
+</button>
+<pre style=""><code class="source r">stargazer(lm1, lm2, model,
+          type = "html",
+          style = "ajps",
+          digits = 2, 
+          align = T, # 中央揃え
+          dep.var.labels = "当落",
+          covariate.labels = c("選挙費用", 
+                               "当選回数", 
+                               "自民党ダミー"))</code></pre>
+<table style="text-align:center">
+<tr>
+<td colspan="4" style="border-bottom: 1px solid black">
+</td>
+</tr>
+<tr>
+<td style="text-align:left">
+</td>
+<td colspan="3">
+<strong>当落</strong>
+</td>
+</tr>
+<tr>
+<td style="text-align:left">
+</td>
+<td>
+<strong>Model 1</strong>
+</td>
+<td>
+<strong>Model 2</strong>
+</td>
+<td>
+<strong>Model 3</strong>
+</td>
+</tr>
+<tr>
+<td colspan="4" style="border-bottom: 1px solid black">
+</td>
+</tr>
+<tr>
+<td style="text-align:left">
+選挙費用
+</td>
+<td>
+0.26<sup>***</sup>
+</td>
+<td>
+0.16<sup>***</sup>
+</td>
+<td>
+0.08<sup>***</sup>
+</td>
+</tr>
+<tr>
+<td style="text-align:left">
+</td>
+<td>
+(0.02)
+</td>
+<td>
+(0.02)
+</td>
+<td>
+(0.02)
+</td>
+</tr>
+<tr>
+<td style="text-align:left">
+当選回数
+</td>
+<td>
+</td>
+<td>
+0.55<sup>***</sup>
+</td>
+<td>
+0.57<sup>***</sup>
+</td>
+</tr>
+<tr>
+<td style="text-align:left">
+</td>
+<td>
+</td>
+<td>
+(0.05)
+</td>
+<td>
+(0.06)
+</td>
+</tr>
+<tr>
+<td style="text-align:left">
+自民党ダミー
+</td>
+<td>
+</td>
+<td>
+</td>
+<td>
+2.60<sup>***</sup>
+</td>
+</tr>
+<tr>
+<td style="text-align:left">
+</td>
+<td>
+</td>
+<td>
+</td>
+<td>
+(0.23)
+</td>
+</tr>
+<tr>
+<td style="text-align:left">
+Constant
+</td>
+<td>
+-3.21<sup>***</sup>
+</td>
+<td>
+-3.60<sup>***</sup>
+</td>
+<td>
+-3.94<sup>***</sup>
+</td>
+</tr>
+<tr>
+<td style="text-align:left">
+</td>
+<td>
+(0.20)
+</td>
+<td>
+(0.23)
+</td>
+<td>
+(0.28)
+</td>
+</tr>
+<tr>
+<td style="text-align:left">
+N
+</td>
+<td>
+985
+</td>
+<td>
+985
+</td>
+<td>
+985
+</td>
+</tr>
+<tr>
+<td style="text-align:left">
+Log Likelihood
+</td>
+<td>
+-452.47
+</td>
+<td>
+-360.70
+</td>
+<td>
+-286.11
+</td>
+</tr>
+<tr>
+<td style="text-align:left">
+AIC
+</td>
+<td>
+908.94
+</td>
+<td>
+727.40
+</td>
+<td>
+580.22
+</td>
+</tr>
+<tr>
+<td colspan="4" style="border-bottom: 1px solid black">
+</td>
+</tr>
+<tr>
+<td colspan="4" style="text-align:left">
+<sup><em><strong></sup>p &lt; .01; <sup></strong></sup>p &lt; .05; <sup></em></sup>p &lt; .1
+</td>
+</tr>
+</table>
+</div>
+<p>他の要因を平均値に固定し、変数を1単位増やした場合に得られるOdsは以下の通りだ</p>
+<div class="row">
+<button class="source R toggle btn btn-xs btn-primary">
+<span class="glyphicon glyphicon-chevron-down"></span> R source
+</button>
+<pre style=""><code class="source r">exp(model$coefficients)</code></pre>
+<button class="output R toggle btn btn-xs btn-success">
+<span class="glyphicon glyphicon-chevron-down"></span> R output
+</button>
+<pre style=""><code class="output r">(Intercept)        expm    previous         ldp 
+ 0.01937353  1.08697524  1.76636625 13.45087534 
+</code></pre>
+</div>
+<p>他の要因を平均値に固定し、変数を1単位増やした場合に得られる当選確率は以下の通りだ</p>
+<div class="row">
+<button class="source R toggle btn btn-xs btn-primary">
+<span class="glyphicon glyphicon-chevron-down"></span> R source
+</button>
+<pre style=""><code class="source r">1 / (1 + exp(-model$coefficients))</code></pre>
+<button class="output R toggle btn btn-xs btn-success">
+<span class="glyphicon glyphicon-chevron-down"></span> R output
+</button>
+<pre style=""><code class="output r">(Intercept)        expm    previous         ldp 
+ 0.01900533  0.52083763  0.63851496  0.93080004 
+</code></pre>
+</div>
+<h2 id="モデルの診断">4-2. モデルの診断</h2>
+<h3 id="roc曲線">ROC曲線</h3>
+<p>左上にROC曲線が近づけば近づくほど良いモデルと考えられる。 最近、このような疫学的なアプローチの重要性がよくわかるよね…（例の感染症のせいで） 計量政治学の世界では最近ようやく一般化されてきたように感じる。（私が古い人間の可能性は否定できない）</p>
+<div class="row">
+<button class="source R toggle btn btn-xs btn-primary">
+<span class="glyphicon glyphicon-chevron-down"></span> R source
+</button>
+<pre style=""><code class="source r">roc <- model %>% 
+  predict(type = "response") %>% 
+  ROCR::prediction(labels = data$smd == 1) %>% 
+  performance("tpr", "fpr") 
+
+df_roc <- data.frame(tpr = roc@y.values[[1]], fpr = roc@x.values[[1]])
+
+ggplot(df_roc, aes(x = fpr, y = tpr)) + 
+  geom_line(color = "red") +
+  geom_abline(intercept = 0, slope = 1, linetype = "dashed") +
+  coord_fixed() +
+  labs(x = "偽陽性率(1 - 特異度)", y = "真陽性率(感度)")</code></pre>
+<div class="row">
+<div class="col-md-offset-3 col-md-6">
+<a href="#" class="thumbnail"><img src="data:image/png;base64,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" style="display: block; margin: auto;" /></a>
+</div>
+</div>
+</div>
+<h3 id="auc">AUC</h3>
+<p>AUCの値が0.9430654で、非常にモデルの当てはまりが良いことが分かる。</p>
+<div class="row">
+<button class="source R toggle btn btn-xs btn-primary">
+<span class="glyphicon glyphicon-chevron-down"></span> R source
+</button>
+<pre style=""><code class="source r"># AUC
+
+auc <- model %>% 
+  predict(type = "response") %>% 
+  ROCR::prediction(labels = data$smd == 1) %>% 
+  performance("auc")
+
+auc@y.values[[1]]  </code></pre>
+<button class="output R toggle btn btn-xs btn-success">
+<span class="glyphicon glyphicon-chevron-down"></span> R output
+</button>
+<pre style=""><code class="output r">[1] 0.9430654
+</code></pre>
+</div>
+<h2 id="点区間推定の可視化">4-3. 点・区間推定の可視化</h2>
+<p>どれも統計的に有意であることがわかる。 ただ、選挙費用が当選確率に与える「影響の大きさ」を読み取ることは不可能。 選挙費用が当選確率に与える「影響の大きさ」を確認するには、限界効果を確認する必要がある。</p>
+<div class="row">
+<button class="source R toggle btn btn-xs btn-primary">
+<span class="glyphicon glyphicon-chevron-down"></span> R source
+</button>
+<pre style=""><code class="source r">model %>% 
+  tidy() %>% 
+  mutate(ll = estimate + qnorm(0.025) * std.error, 
+         ul = estimate + qnorm(0.975) * std.error,
+         fit = 1 / (1 + exp(-estimate)), 
+         lower = 1 / (1 + exp(-ll)), 
+         upper = 1 / (1 + exp(-ul))) %>% 
+  filter(!term == "(Intercept)") %>% 
+  transform(term = factor(term, levels = c("ldp" ,"previous", "expm"))) %>%
+  ggplot(aes(x = term,
+             y = fit)) +
+  geom_pointrange(aes(ymin = lower,
+                      ymax = upper),
+                  color = "blue",
+                  size = 1) +
+  geom_hline(yintercept = 0, 
+             linetype = 2, 
+             color = "red") +
+  geom_text(aes(x = term,
+                y = fit,
+                label = round(fit, 2)),
+            vjust = -1) +
+  scale_x_discrete(labels = c("expm" = "選挙費用",
+                              "previous" = "当選回数",
+                              "ldp" = "政党規模")) +
+  scale_y_continuous(breaks = seq(0, 1, length = 11)) +
+  labs(x = NULL, y = "推定値") +
+  coord_flip()</code></pre>
+<div class="row">
+<div class="col-md-offset-3 col-md-6">
+<a href="#" class="thumbnail"><img src="data:image/png;base64,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" style="display: block; margin: auto;" /></a>
+</div>
+</div>
+</div>
+<h2 id="予測確率限界効果の可視化">4-4. 予測確率・限界効果の可視化</h2>
+<h3 id="予測確率">予測確率</h3>
+<p>統制変数を平均値に固定し、独立変数である選挙費用が増えるとどのような予測確率を得られるのかを可視化した。</p>
+<div class="row">
+<button class="source R toggle btn btn-xs btn-primary">
+<span class="glyphicon glyphicon-chevron-down"></span> R source
+</button>
+<pre style=""><code class="source r">cplot(model, 
+      x = "expm", 
+      what = "prediction",
+      data = data,
+      draw = F) %>%
+  as_data_frame() %>%
+  ggplot(aes(x = xvals, y = yvals, ymin = lower, ymax = upper)) +
+  geom_ribbon(color = "lightblue",
+              fill = "skyblue",
+              alpha = .3) +
+  geom_line(color = "blue") +
+  geom_pointrange() +
+  labs(x = "選挙費用（単位：100万円）", 
+       y = "予測当選確率の予測値") </code></pre>
+<button class="output R toggle btn btn-xs btn-success">
+<span class="glyphicon glyphicon-chevron-down"></span> R output
+</button>
+<pre style=""><code class="output r">       xvals     yvals     upper      lower
+1   0.062710 0.1107916 0.1617745 0.05980868
+2   1.087168 0.1194928 0.1693249 0.06966069
+3   2.111627 0.1287784 0.1771324 0.08042434
+4   3.136085 0.1386719 0.1852529 0.09209087
+5   4.160543 0.1491953 0.1937772 0.10461342
+6   5.185002 0.1603687 0.2028488 0.11788847
+7   6.209460 0.1722094 0.2126871 0.13173175
+8   7.233918 0.1847321 0.2236103 0.14585380
+9   8.258377 0.1979476 0.2360408 0.15985439
+10  9.282835 0.2118628 0.2504545 0.17327118
+11 10.307293 0.2264801 0.2672579 0.18570225
+12 11.331752 0.2417964 0.2866516 0.19694119
+13 12.356210 0.2578033 0.3085939 0.20701275
+14 13.380668 0.2744863 0.3328790 0.21609356
+15 14.405127 0.2918244 0.3592392 0.22440950
+16 15.429585 0.3097900 0.3874045 0.23217545
+17 16.454043 0.3283488 0.4171208 0.23957676
+18 17.478502 0.3474597 0.4481485 0.24677091
+19 18.502960 0.3670750 0.4802555 0.25389463
+20 19.527418 0.3871408 0.5132111 0.26107041
+</code></pre>
+<div class="row">
+<div class="col-md-offset-3 col-md-6">
+<a href="#" class="thumbnail"><img src="data:image/png;base64,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" style="display: block; margin: auto;" /></a>
+</div>
+</div>
+</div>
+<h3 id="限界効果">限界効果</h3>
+<p>選挙費用が得票率に与えている影響を可視化したものだ。 1000万円かけても当選確率に与える影響は 0.01 = 1% 以下であることを考えると、非常にコスパが悪い</p>
+<div class="row">
+<button class="source R toggle btn btn-xs btn-primary">
+<span class="glyphicon glyphicon-chevron-down"></span> R source
+</button>
+<pre style=""><code class="source r">cplot(model, 
+      x = "expm", 
+      what = "effect",
+      data = data,
+      draw = F) %>%
+  as_data_frame() %>%
+  ggplot(aes(x = xvals, y = yvals, ymin = lower, ymax = upper)) +
+  geom_ribbon(color = "lightblue",
+              fill = "skyblue",
+              alpha = .3) +
+  geom_line(color = "blue") +
+  geom_pointrange() +
+  geom_hline(yintercept = 0,
+             linetype = 2,
+             color = "red") +
+  labs(x = "選挙費用（単位：100万円）", 
+       y = "選挙費用の平均限界効果（AME）")</code></pre>
+<div class="row">
+<div class="col-md-offset-3 col-md-6">
+<a href="#" class="thumbnail"><img src="data:image/png;base64,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" style="display: block; margin: auto;" /></a>
+</div>
+</div>
+</div>
+<h1 id="分析結果の解釈">5. 分析結果の解釈</h1>
+<p>分析が終わったとしても、気を抜いてはいけない。 アカデミックな世界ならば論文に、ビジネスの世界なら報告書に、この分析結果をまとめ上げなくてはならない。 分析結果をまとめるには、重回帰分析の表だけではなく、キャタピラープロットやベータ値を出しておく必要がある。 今回の分析をまとめると、こうなる。</p>
+<p>本分析は、「選挙費用が当選確率に与える影響はどれほどか」という問いに対し、ロジスティック回帰分析を用いて解明を試みた。 その結果、選挙費用と選挙の当落には統計的に有意な関係にあるとわかった。また、AUCの値が約0.94と、モデルに組み込んでいない変数の影響を無視できるであろうことから、確度の高い結果であると言える。 統制変数を平均値で固定し、選挙費用だけを変化させた場合の予測確率の図から、選挙費用を削ることは得策ではないとわかる。 平均限界効果は選挙費用が高くなるにつれて上昇し、0のラインに95%信頼区間がかかることがない。 このことからも、選挙費用が確かに当落に関係していることが分かる。ただ、影響は小さく、実質的な有意性はないと考えられる。非常にコスパが悪い。 ただ、所属政党や当選回数は自らの意思で決めることはできないため、選挙に勝つためには自ら設定できる選挙費用は非常に重要な要因であろう。コスパは悪いが、コストをかけざるをえないだろう。</p>
+<p>以上のようになる。 論文であればもう少し論文の目的を振り返っても良いだろう。</p>
+<p>enjoy !</p>
+<HR>
+<p>この記事のコードをまとめたものは<a href="https://github.com/FruitGranola/R_Logistic_Regression">Github</a>にあります。</p>
 <button>
 <a href="index.html">Homeに戻る</a>
 </button>
@@ -892,6 +1948,34 @@
 <p class="navbar-text">
 Toggle
 </p>
+</li>
+<li class="dropup">
+<a href="#" class="dropdown-toggle" data-toggle="dropdown">Code <b class="caret"></b></a>
+<ul class="dropdown-menu">
+<li class="dropdown-header">
+Languages
+</li>
+<li class="active">
+<a href="#" class="toggle-global source R" type="source.R">R</a>
+</li>
+<li>
+<a href="#" type="all-source" class="toggle-global">All</a>
+</li>
+</ul>
+</li>
+<li class="dropup">
+<a href="#" class="dropdown-toggle" data-toggle="dropdown">Output <b class="caret"></b></a>
+<ul class="dropdown-menu">
+<li class="dropdown-header">
+Type
+</li>
+<li class="active">
+<a href="#" class="toggle-global output" type="output">output</a>
+</li>
+<li>
+<a href="#" type="all-output" class="toggle-global">All</a>
+</li>
+</ul>
 </li>
 <li class="active">
 <a href="#" type="figure" class="toggle-global">Figures</a>
