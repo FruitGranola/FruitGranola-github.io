@@ -1,0 +1,894 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+<meta charset="utf-8" />
+<meta name="generator" content="pandoc" />
+<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
+
+
+
+
+<title>Barplot</title>
+
+<script src="site_libs/header-attrs-2.7/header-attrs.js"></script>
+<script src="site_libs/jquery-1.11.3/jquery.min.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link href="site_libs/bootstrap-3.3.5/css/united.min.css" rel="stylesheet" />
+<script src="site_libs/bootstrap-3.3.5/js/bootstrap.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/respond.min.js"></script>
+<style>h1 {font-size: 34px;}
+       h1.title {font-size: 38px;}
+       h2 {font-size: 30px;}
+       h3 {font-size: 24px;}
+       h4 {font-size: 18px;}
+       h5 {font-size: 16px;}
+       h6 {font-size: 12px;}
+       code {color: inherit; background-color: rgba(0, 0, 0, 0.04);}
+       pre:not([class]) { background-color: white }</style>
+<script src="site_libs/jqueryui-1.11.4/jquery-ui.min.js"></script>
+<link href="site_libs/tocify-1.9.1/jquery.tocify.css" rel="stylesheet" />
+<script src="site_libs/tocify-1.9.1/jquery.tocify.js"></script>
+<script src="site_libs/navigation-1.1/tabsets.js"></script>
+<script src="site_libs/navigation-1.1/codefolding.js"></script>
+<script src="site_libs/navigation-1.1/sourceembed.js"></script>
+<link href="site_libs/highlightjs-9.12.0/default.css" rel="stylesheet" />
+<script src="site_libs/highlightjs-9.12.0/highlight.js"></script>
+<link href="site_libs/font-awesome-5.1.0/css/all.css" rel="stylesheet" />
+<link href="site_libs/font-awesome-5.1.0/css/v4-shims.css" rel="stylesheet" />
+
+<style type="text/css">
+  code{white-space: pre-wrap;}
+  span.smallcaps{font-variant: small-caps;}
+  span.underline{text-decoration: underline;}
+  div.column{display: inline-block; vertical-align: top; width: 50%;}
+  div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+  ul.task-list{list-style: none;}
+    </style>
+
+<style type="text/css">code{white-space: pre;}</style>
+<script type="text/javascript">
+if (window.hljs) {
+  hljs.configure({languages: []});
+  hljs.initHighlightingOnLoad();
+  if (document.readyState && document.readyState === "complete") {
+    window.setTimeout(function() { hljs.initHighlighting(); }, 0);
+  }
+}
+</script>
+
+
+
+<style type="text/css">
+#rmd-source-code {
+  display: none;
+}
+</style>
+
+
+
+
+
+<style type = "text/css">
+.main-container {
+  max-width: 940px;
+  margin-left: auto;
+  margin-right: auto;
+}
+img {
+  max-width:100%;
+}
+.tabbed-pane {
+  padding-top: 12px;
+}
+.html-widget {
+  margin-bottom: 20px;
+}
+button.code-folding-btn:focus {
+  outline: none;
+}
+summary {
+  display: list-item;
+}
+pre code {
+  padding: 0;
+}
+</style>
+
+
+<style type="text/css">
+.dropdown-submenu {
+  position: relative;
+}
+.dropdown-submenu>.dropdown-menu {
+  top: 0;
+  left: 100%;
+  margin-top: -6px;
+  margin-left: -1px;
+  border-radius: 0 6px 6px 6px;
+}
+.dropdown-submenu:hover>.dropdown-menu {
+  display: block;
+}
+.dropdown-submenu>a:after {
+  display: block;
+  content: " ";
+  float: right;
+  width: 0;
+  height: 0;
+  border-color: transparent;
+  border-style: solid;
+  border-width: 5px 0 5px 5px;
+  border-left-color: #cccccc;
+  margin-top: 5px;
+  margin-right: -10px;
+}
+.dropdown-submenu:hover>a:after {
+  border-left-color: #adb5bd;
+}
+.dropdown-submenu.pull-left {
+  float: none;
+}
+.dropdown-submenu.pull-left>.dropdown-menu {
+  left: -100%;
+  margin-left: 10px;
+  border-radius: 6px 0 6px 6px;
+}
+</style>
+
+<script type="text/javascript">
+// manage active state of menu based on current page
+$(document).ready(function () {
+  // active menu anchor
+  href = window.location.pathname
+  href = href.substr(href.lastIndexOf('/') + 1)
+  if (href === "")
+    href = "index.html";
+  var menuAnchor = $('a[href="' + href + '"]');
+
+  // mark it active
+  menuAnchor.tab('show');
+
+  // if it's got a parent navbar menu mark it active as well
+  menuAnchor.closest('li.dropdown').addClass('active');
+
+  // Navbar adjustments
+  var navHeight = $(".navbar").first().height() + 15;
+  var style = document.createElement('style');
+  var pt = "padding-top: " + navHeight + "px; ";
+  var mt = "margin-top: -" + navHeight + "px; ";
+  var css = "";
+  // offset scroll position for anchor links (for fixed navbar)
+  for (var i = 1; i <= 6; i++) {
+    css += ".section h" + i + "{ " + pt + mt + "}\n";
+  }
+  style.innerHTML = "body {" + pt + "padding-bottom: 40px; }\n" + css;
+  document.head.appendChild(style);
+});
+</script>
+
+<!-- tabsets -->
+
+<style type="text/css">
+.tabset-dropdown > .nav-tabs {
+  display: inline-table;
+  max-height: 500px;
+  min-height: 44px;
+  overflow-y: auto;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.tabset-dropdown > .nav-tabs > li.active:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li.active:before {
+  content: "&#xe258;";
+  border: none;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs > li.active {
+  display: block;
+}
+
+.tabset-dropdown > .nav-tabs > li > a,
+.tabset-dropdown > .nav-tabs > li > a:focus,
+.tabset-dropdown > .nav-tabs > li > a:hover {
+  border: none;
+  display: inline-block;
+  border-radius: 4px;
+  background-color: transparent;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li {
+  display: block;
+  float: none;
+}
+
+.tabset-dropdown > .nav-tabs > li {
+  display: none;
+}
+</style>
+
+<!-- code folding -->
+<style type="text/css">
+.code-folding-btn { margin-bottom: 4px; }
+</style>
+
+
+
+<style type="text/css">
+
+#TOC {
+  margin: 25px 0px 20px 0px;
+}
+@media (max-width: 768px) {
+#TOC {
+  position: relative;
+  width: 100%;
+}
+}
+
+@media print {
+.toc-content {
+  /* see https://github.com/w3c/csswg-drafts/issues/4434 */
+  float: right;
+}
+}
+
+.toc-content {
+  padding-left: 30px;
+  padding-right: 40px;
+}
+
+div.main-container {
+  max-width: 1200px;
+}
+
+div.tocify {
+  width: 20%;
+  max-width: 260px;
+  max-height: 85%;
+}
+
+@media (min-width: 768px) and (max-width: 991px) {
+  div.tocify {
+    width: 25%;
+  }
+}
+
+@media (max-width: 767px) {
+  div.tocify {
+    width: 100%;
+    max-width: none;
+  }
+}
+
+.tocify ul, .tocify li {
+  line-height: 20px;
+}
+
+.tocify-subheader .tocify-item {
+  font-size: 0.90em;
+}
+
+.tocify .list-group-item {
+  border-radius: 0px;
+}
+
+
+</style>
+
+
+
+</head>
+
+<body>
+
+
+<div class="container-fluid main-container">
+
+
+<!-- setup 3col/9col grid for toc_float and main content  -->
+<div class="row">
+<div class="col-sm-12 col-md-4 col-lg-3">
+<div id="TOC" class="tocify">
+</div>
+</div>
+
+<div class="toc-content col-sm-12 col-md-8 col-lg-9">
+
+
+
+
+<div class="navbar navbar-default  navbar-fixed-top" role="navigation">
+  <div class="container">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="index.html">Sort Horiiのメモ帳</a>
+    </div>
+    <div id="navbar" class="navbar-collapse collapse">
+      <ul class="nav navbar-nav">
+        <li>
+  <a href="index.html">
+    <span class="fas fa-home"></span>
+     
+    Home
+  </a>
+</li>
+<li class="dropdown">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+    Data Visualization
+     
+    <span class="caret"></span>
+  </a>
+  <ul class="dropdown-menu" role="menu">
+    <li class="dropdown-header">Data Visualization</li>
+    <li>
+      <a href="Barplot.html">Barplot</a>
+    </li>
+    <li>
+      <a href="Histogram.html">Histogram</a>
+    </li>
+    <li>
+      <a href="Boxplot.html">Boxplot</a>
+    </li>
+    <li>
+      <a href="Scatterplot.html">Scatterplot</a>
+    </li>
+    <li>
+      <a href="Lineplot.html">Lineplot</a>
+    </li>
+  </ul>
+</li>
+<li class="dropdown">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+    Regression
+     
+    <span class="caret"></span>
+  </a>
+  <ul class="dropdown-menu" role="menu">
+    <li class="dropdown-header">Regression</li>
+    <li>
+      <a href="Multiple_Linear_Regression.html">Multiple Linear Regression</a>
+    </li>
+    <li>
+      <a href="Multiple_Linear_Regression_interaction.html">Multiple Linear Regression interaction</a>
+    </li>
+    <li>
+      <a href="Logistic_Regression.html">Logistic Regression</a>
+    </li>
+    <li>
+      <a href="Logistic_Regression_interaction.html">Logistic Regression interaction</a>
+    </li>
+  </ul>
+</li>
+      </ul>
+      <ul class="nav navbar-nav navbar-right">
+        
+      </ul>
+    </div><!--/.nav-collapse -->
+  </div><!--/.container -->
+</div><!--/.navbar -->
+
+<div id="header">
+
+<div class="btn-group pull-right float-right">
+<button type="button" class="btn btn-default btn-xs btn-secondary btn-sm dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><span>Code</span> <span class="caret"></span></button>
+<ul class="dropdown-menu dropdown-menu-right" style="min-width: 50px;">
+<li><a id="rmd-show-all-code" href="#">Show All Code</a></li>
+<li><a id="rmd-hide-all-code" href="#">Hide All Code</a></li>
+<li role="separator" class="divider"></li>
+<li><a id="rmd-download-source" href="#">Download Rmd</a></li>
+</ul>
+</div>
+
+
+
+<h1 class="title toc-ignore">Barplot</h1>
+<h4 class="date">2021-02-20 22:57:15</h4>
+
+</div>
+
+
+<pre class="r"><code>knitr::opts_chunk$set(warning = F,
+                      message = F,
+                      comment = &quot;&quot;,
+                      fig.align = &quot;center&quot;,
+                      fig.width = 8,
+                      fig.height = 5)</code></pre>
+<div id="使用するパッケージ" class="section level1" number="1">
+<h1 number="1"><span class="header-section-number">1</span> 使用するパッケージ</h1>
+<p>準備していないパッケージは<code>install.packages("packge_name")</code>でインストールする。</p>
+<pre class="r"><code># 使用するパッケージ
+library(tidyverse) # データの整形から可視化まで
+library(magrittr) # パイプ処理を使いこなすせ！
+library(gghighlight) # 重要なデータを強調する
+
+# ggplot2 の theme をあらかじめ設定しておく
+theme_set(theme_minimal(base_size = 15))</code></pre>
+</div>
+<div id="データの読み込み" class="section level1" number="2">
+<h1 number="2"><span class="header-section-number">2</span> データの読み込み</h1>
+<p>今回使用するのは衆院選に出馬した各候補者のデータだ。</p>
+<p>1996年から2017年までのデータが詰まっている。</p>
+<p>データは<a href="./data/House_of_Councilors_1996_2017.csv">こちら</a></p>
+<pre class="r"><code>data &lt;- read_csv(&quot;./data/House_of_Councilors_1996_2017.csv&quot;) # 1996年～2017年までの衆院選データ</code></pre>
+<div id="データ内の変数名を確認する" class="section level2" number="2.1">
+<h2 number="2.1"><span class="header-section-number">2.1</span> データ内の変数名を確認する</h2>
+<p>どんな変数があるか見てみよう。</p>
+<pre class="r"><code>names(data)</code></pre>
+<pre><code> [1] &quot;year&quot;       &quot;ku&quot;         &quot;kun&quot;        &quot;status&quot;     &quot;name&quot;      
+ [6] &quot;party&quot;      &quot;party_code&quot; &quot;previous&quot;   &quot;wl&quot;         &quot;voteshare&quot; 
+[11] &quot;age&quot;        &quot;nocand&quot;     &quot;rank&quot;       &quot;vote&quot;       &quot;eligible&quot;  
+[16] &quot;turnout&quot;    &quot;exp&quot;        &quot;expm&quot;       &quot;vs&quot;         &quot;exppv&quot;     
+[21] &quot;smd&quot;        &quot;party_jpn&quot; </code></pre>
+<p>各変数が意味するものは以下のようになっている。</p>
+<table>
+<thead>
+<tr class="header">
+<th>変数名</th>
+<th>内容 　</th>
+<th>備考</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>year</td>
+<td>実施年 　</td>
+<td></td>
+</tr>
+<tr class="even">
+<td>ku</td>
+<td>都道府県</td>
+<td></td>
+</tr>
+<tr class="odd">
+<td>kun</td>
+<td>区域 　</td>
+<td></td>
+</tr>
+<tr class="even">
+<td>status</td>
+<td>現職か否か</td>
+<td>0 = 新人・元, 1 = 現職</td>
+</tr>
+<tr class="odd">
+<td>name</td>
+<td>名前</td>
+<td></td>
+</tr>
+<tr class="even">
+<td>party</td>
+<td>所属政党</td>
+<td>ローマ字での略語</td>
+</tr>
+<tr class="odd">
+<td>party_code</td>
+<td>所属政党</td>
+<td>数字で通し番号</td>
+</tr>
+<tr class="even">
+<td>previous</td>
+<td>当選回数</td>
+<td></td>
+</tr>
+<tr class="odd">
+<td>wl</td>
+<td>当落結果　</td>
+<td>0 = 落選, 1 = 当選, 2 = 復活当選</td>
+</tr>
+<tr class="even">
+<td>voteshare</td>
+<td>得票率</td>
+<td>単位: %</td>
+</tr>
+<tr class="odd">
+<td>age</td>
+<td>年齢</td>
+<td></td>
+</tr>
+<tr class="even">
+<td>nocand</td>
+<td>候補者数</td>
+<td></td>
+</tr>
+<tr class="odd">
+<td>rank</td>
+<td>順位　　　</td>
+<td></td>
+</tr>
+<tr class="even">
+<td>vote</td>
+<td>得票数　　</td>
+<td></td>
+</tr>
+<tr class="odd">
+<td>eligible</td>
+<td>有権者数</td>
+<td></td>
+</tr>
+<tr class="even">
+<td>turnout</td>
+<td>投票率</td>
+<td>単位: %</td>
+</tr>
+<tr class="odd">
+<td>exp</td>
+<td>選挙費用</td>
+<td>単位: 円</td>
+</tr>
+<tr class="even">
+<td>expm</td>
+<td>選挙費用　</td>
+<td>単位: 百万円</td>
+</tr>
+<tr class="odd">
+<td>vs</td>
+<td>得票割合</td>
+<td>小数で表記</td>
+</tr>
+<tr class="even">
+<td>exppv</td>
+<td>選挙費用</td>
+<td>単位: 円（有権者一人当たりの選挙費用）</td>
+</tr>
+<tr class="odd">
+<td>smd</td>
+<td>当落</td>
+<td>0 = 落選, 1 = 当選</td>
+</tr>
+<tr class="even">
+<td>party_jpn</td>
+<td>所属政党　</td>
+<td>日本語</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div id="データの整形" class="section level2" number="2.2">
+<h2 number="2.2"><span class="header-section-number">2.2</span> データの整形</h2>
+<p>今回は当選者数を使って棒グラフを描いていく。</p>
+<p>棒グラフは複数の属性を比較する際に使用する。例えば、各地の積雪量を比較する際に使用される。</p>
+<p>今回は選挙データを使用するので、各政党の当選者数を可視化してみる。</p>
+<pre class="r"><code>data %&lt;&gt;% 
+  group_by(year, party_jpn) %&gt;% # 年ごと、各政党ごとに処理を行う
+  summarise(smd = sum(smd)) %&gt;%  # 各政党の当選者数を計算
+  filter(party_jpn %in% c(&quot;自民党&quot;, &quot;民主党&quot;, &quot;公明党&quot;)) %&gt;% 
+  as.data.frame() %&gt;% # 一応
+  drop_na() # naを落とす</code></pre>
+<p>また、2005年の衆院選データを可視化することとする。</p>
+<pre class="r"><code>data_2005 &lt;- data %&gt;% 
+  filter(year == 2005)</code></pre>
+</div>
+</div>
+<div id="普通の棒グラフ" class="section level1" number="3">
+<h1 number="3"><span class="header-section-number">3</span> 普通の棒グラフ</h1>
+<pre class="r"><code>data_2005 %&gt;% 
+  ggplot(aes(x = party_jpn, 
+             y = smd)) +
+  geom_bar(stat = &quot;identity&quot;) +
+  labs(x = NULL, # X軸のラベル名を変える　NULLを与えると無くなる
+       y = &quot;当選者数&quot;, # Y軸のラベル名を変える
+       title = &quot;2005年衆院選: 各政党の当選者数&quot;) # グラフにタイトルを付ける</code></pre>
+<p><img src="Barplot_files/figure-html/unnamed-chunk-7-1.png" width="768" style="display: block; margin: auto;" /></p>
+</div>
+<div id="棒の色を変える" class="section level1" number="4">
+<h1 number="4"><span class="header-section-number">4</span> 棒の色を変える</h1>
+<p>ggplot2で使用できる色のリストは<a href="./document/ggplot2_color-list.pdf">こちら</a></p>
+<pre class="r"><code>data_2005 %&gt;% 
+  ggplot(aes(x = party_jpn,
+             y = smd)) +
+  geom_bar(stat = &quot;identity&quot;,
+           color = &quot;black&quot;, # 棒の枠の色を変える
+           fill = &quot;orange&quot;) + # 棒の中の色を変える
+  labs(x = NULL, 
+       y = &quot;当選者数&quot;,
+       title = &quot;2005年衆院選: 各政党の当選者数&quot;) </code></pre>
+<p><img src="Barplot_files/figure-html/unnamed-chunk-8-1.png" width="768" style="display: block; margin: auto;" /></p>
+</div>
+<div id="棒の並び替え" class="section level1" number="5">
+<h1 number="5"><span class="header-section-number">5</span> 棒の並び替え</h1>
+<p>より見やすい棒グラフを作るのに、大きい順や小さい順に並び変えることは非常に有効だ。</p>
+<p><code>fct_reorder(x, y, .desc = T)</code>でYが大きい順にXを並び変える。</p>
+<p>ggplot2のコード内で計算するのはおすすめしない。なるべくggplot2のコード外で計算を行う。</p>
+<pre class="r"><code>data_2005 %&lt;&gt;% mutate(party_jpn = fct_reorder(party_jpn, smd, .desc = T)) </code></pre>
+<pre class="r"><code>data_2005 %&gt;% 
+  ggplot(aes(x = party_jpn, 
+             y = smd)) +
+  geom_bar(stat = &quot;identity&quot;) +
+  labs(x = NULL,
+       y = &quot;当選者数&quot;,
+       title = &quot;2005年衆院選: 各政党の当選者数&quot;) </code></pre>
+<p><img src="Barplot_files/figure-html/unnamed-chunk-10-1.png" width="768" style="display: block; margin: auto;" /></p>
+</div>
+<div id="yの値をラベルで表示する" class="section level1" number="6">
+<h1 number="6"><span class="header-section-number">6</span> Yの値をラベルで表示する</h1>
+<p>大きい順や小さい順に並び変えても細かい数値が読み取れるわけではない。</p>
+<p>そのため、ラベルを付けるとより見やすい棒グラフになる。</p>
+<p>また、<code>paste()</code>を使うと数値の後に単位を付けられる。</p>
+<p>その場合は、<code>paste(smd, "人", sep = "")</code>を<code>label =</code>に代入する。</p>
+<pre class="r"><code>data_2005 %&gt;% 
+  ggplot(aes(x = party_jpn,
+             y = smd)) +
+  geom_bar(stat = &quot;identity&quot;) +
+  labs(x = NULL, 
+       y = &quot;当選者数&quot;,
+       title = &quot;2005年衆院選: 各政党の当選者数&quot;) +
+  geom_label(aes(label =　smd), # ラベルの数値
+             size = 8, # ラベルのサイズ
+             position = position_stack(vjust = 0.5)) # ラベルの位置 </code></pre>
+<p><img src="Barplot_files/figure-html/unnamed-chunk-11-1.png" width="768" style="display: block; margin: auto;" /></p>
+</div>
+<div id="特定の棒の色を変える" class="section level1" number="7">
+<h1 number="7"><span class="header-section-number">7</span> 特定の棒の色を変える</h1>
+<p>図の中に、視線を集中させたい棒がある場合は色を活用しよう。</p>
+<p>まずは、注目させたいものを1、それ以外を0とするダミー変数を作成する。</p>
+<pre class="r"><code>data_2005 %&lt;&gt;% mutate(ldp = if_else(party_jpn == &quot;自民党&quot;, 1, 0))</code></pre>
+<pre class="r"><code>data_2005 %&gt;% 
+  ggplot(aes(x = party_jpn,                  
+             y = smd)) + 
+  geom_bar(aes(fill = factor(ldp)), # ldpの値によって色を変える
+           stat = &quot;identity&quot;,
+           show.legend = F) + # show.legend = Fでlegendを非表示に
+  labs(x = NULL,
+       y = &quot;当選者数&quot;, 
+       title = &quot;2005年衆院選: 各政党の当選者数&quot;) +
+  geom_label(aes(label = smd),                                  
+             size = 8,                                                          
+             position = position_stack(vjust = 0.5)) </code></pre>
+<p><img src="Barplot_files/figure-html/unnamed-chunk-13-1.png" width="768" style="display: block; margin: auto;" /></p>
+<p>有彩色と無彩色で色分けをすると、より棒を強調することができる。</p>
+<p>今回は赤とグレーで色分けしてみた。</p>
+<pre class="r"><code>data_2005 %&gt;% 
+  ggplot(aes(x = party_jpn,                  
+             y = smd)) + 
+  geom_bar(aes(fill = factor(ldp)), 
+           stat = &quot;identity&quot;,
+           show.legend = F) +
+  labs(x = NULL,
+       y = &quot;当選者数&quot;, 
+       title = &quot;2005年衆院選: 各政党の当選者数&quot;) +
+  geom_label(aes(label = smd),                                  
+             size = 8,                                                          
+             position = position_stack(vjust = 0.5)) +
+  scale_fill_manual(values = c(&quot;grey&quot;,&quot;red&quot;)) # values = c(&quot;color0&quot;,&quot;color1&quot;)で色を選ぶ</code></pre>
+<p><img src="Barplot_files/figure-html/unnamed-chunk-14-1.png" width="768" style="display: block; margin: auto;" /></p>
+</div>
+<div id="gghighlightを使った場合" class="section level1" number="8">
+<h1 number="8"><span class="header-section-number">8</span> gghighlightを使った場合</h1>
+<p>簡単にグラフの強調を行うパッケージとして<code>gghighlight</code>がある。</p>
+<p>ただし、<code>gghighlight</code>はもっと大量のデータかつ、線グラフに使うほうが一般的だろう。</p>
+<p>また、<code>scale_fill_manual()</code>を使えば色を選べる。</p>
+<pre class="r"><code>data_2005 %&gt;% 
+  ggplot(aes(x = party_jpn,                  
+             y = smd)) + 
+  geom_bar(aes(fill = party_jpn),
+           stat = &quot;identity&quot;,
+           show.legend = F) +
+  labs(x = NULL, 
+       y = &quot;当選者数&quot;, 
+       title = &quot;2005年衆院選: 各政党の当選者数&quot;) +
+  geom_label(aes(label = smd),                                  
+             size = 8,                                                          
+             position = position_stack(vjust = 0.5)) +
+  gghighlight(party_jpn %in% c(&quot;自民党&quot;, &quot;民主党&quot;)) # gghighlight()の中に色々条件を入れる</code></pre>
+<p><img src="Barplot_files/figure-html/unnamed-chunk-15-1.png" width="768" style="display: block; margin: auto;" /></p>
+</div>
+<div id="描画範囲の設定" class="section level1" number="9">
+<h1 number="9"><span class="header-section-number">9</span> 描画範囲の設定</h1>
+<p>棒グラフの上のほうが詰まりすぎると見えづらいことがある。</p>
+<p>また、ラベルを棒の上に付けると見切れることがある。そういうときは描画範囲を調整する。</p>
+<pre class="r"><code>data_2005 %&gt;% 
+  ggplot(aes(x = party_jpn,                  
+             y = smd)) +
+  geom_bar(stat = &quot;identity&quot;) + 
+  labs(x = NULL,
+       y = &quot;当選者数&quot;,
+       title = &quot;2005年衆院選: 各政党の当選者数&quot;) +
+  geom_label(aes(label = smd),                                  
+             size = 8) +
+  lims(y = c(0, 250)) # y軸を0～250まで表示する</code></pre>
+<p><img src="Barplot_files/figure-html/unnamed-chunk-16-1.png" width="768" style="display: block; margin: auto;" /></p>
+</div>
+<div id="xメモリの操作" class="section level1" number="10">
+<h1 number="10"><span class="header-section-number">10</span> Xメモリの操作</h1>
+<p>xがカテゴリカル変数の場合、このような工夫で図を分かりやすくできる。</p>
+<pre class="r"><code>data_2005 %&gt;% 
+  ggplot(aes(x = party_jpn,                  
+             y = smd)) +
+  geom_bar(stat = &quot;identity&quot;) +       
+  labs(x = NULL,
+       y = &quot;当選者数&quot;,
+       title = &quot;2005年衆院選: 各政党の当選者数&quot;) +
+  geom_label(aes(label = smd),
+             size = 8,                                                          
+             position = position_stack(vjust = 0.5)) +
+  scale_x_discrete(labels = c(&quot;自民党&quot; = &quot;自民党\n(346人)&quot;, # 自民党を自民党\n(候補者数)に
+                              &quot;民主党&quot; = &quot;民主党\n(299人)&quot;, # 民主党を民主党\n(候補者数)に
+                              &quot;公明党&quot; = &quot;公明党\n(52人)&quot;)) # 公明党を公明党\n(候補者数)に</code></pre>
+<p><img src="Barplot_files/figure-html/unnamed-chunk-17-1.png" width="768" style="display: block; margin: auto;" /></p>
+</div>
+<div id="yメモリの操作" class="section level1" number="11">
+<h1 number="11"><span class="header-section-number">11</span> Yメモリの操作</h1>
+<p>メモリの刻みを増やしたり、メモリの範囲を制限したりできる。</p>
+<p>あくまでもメモリの調整なので、<code>xlim()</code>や<code>ylim()</code>とは別物だ。</p>
+<pre class="r"><code>data_2005 %&gt;% 
+  ggplot(aes(x = party_jpn,                  
+             y = smd)) +
+  geom_bar(stat = &quot;identity&quot;) +       
+  labs(x = NULL,
+       y = &quot;当選者数&quot;,
+       title = &quot;2005年衆院選: 各政党の当選者数&quot;) +
+  geom_label(aes(label = smd),                                  
+             size = 8,                                                          
+             position = position_stack(vjust = 0.5)) +
+  scale_x_discrete(labels = c(&quot;自民党&quot; = &quot;自民党\n(346人)&quot;, 
+                              &quot;民主党&quot; = &quot;民主党\n(299人)&quot;, 
+                              &quot;公明党&quot; = &quot;公明党\n(52人)&quot;)) + 
+  scale_y_continuous(breaks = seq(0, 220, length = 12)) # メモリの範囲と刻みを決める</code></pre>
+<p><img src="Barplot_files/figure-html/unnamed-chunk-18-1.png" width="768" style="display: block; margin: auto;" /></p>
+</div>
+<div id="グラフを回転させる" class="section level1" number="12">
+<h1 number="12"><span class="header-section-number">12</span> グラフを回転させる</h1>
+<p>xが増えると文字が重なって見えにくくなる。文字の角度を変えてもいいが、視認性が低下する。</p>
+<p>そのため、グラフを回転することをおすすめする。</p>
+<pre class="r"><code>data_2005 %&gt;% 
+  ggplot(aes(x = party_jpn,                  
+             y = smd)) +
+  geom_bar(stat = &quot;identity&quot;) +       
+  labs(x = NULL,
+       y = &quot;当選者数&quot;,
+       title = &quot;2005年衆院選: 各政党の当選者数&quot;) +
+  geom_label(aes(label = smd),                                  
+             size = 8,                                                          
+             position = position_stack(vjust = 0.5)) +
+  coord_flip() # coord_flip()でグラフを回転させる。</code></pre>
+<p><img src="Barplot_files/figure-html/unnamed-chunk-19-1.png" width="768" style="display: block; margin: auto;" /></p>
+</div>
+<div id="実施年毎の棒グラフ" class="section level1" number="13">
+<h1 number="13"><span class="header-section-number">13</span> 実施年毎の棒グラフ</h1>
+<p>小規模な時系列データは棒グラフで良いだろう。</p>
+<p>ただ、大規模な時系列データは素直に折れ線グラフを使ったほうが見やすい。</p>
+<p>今回は折れ線グラフのほうが視認性が高いだろう。</p>
+<pre class="r"><code>data %&lt;&gt;% mutate(year = fct_reorder(as.factor(year), year, .desc = F)) </code></pre>
+<pre class="r"><code>data %&gt;% 
+  ggplot(aes(x = party_jpn,
+             y = smd)) +
+  geom_bar(aes(fill = party_jpn), 
+           stat = &quot;identity&quot;,
+           show.legend = F) +
+  labs(x = NULL,
+       y = &quot;当選者数&quot;, 
+       title = &quot;1996～2017年衆院選: 各政党の当選者数&quot;) +
+  geom_label(aes(label = smd), 
+             position = position_stack(vjust = .9),
+             size = 3) + 
+  facet_wrap(~ year) </code></pre>
+<p><img src="Barplot_files/figure-html/unnamed-chunk-21-1.png" width="768" style="display: block; margin: auto;" /></p>
+</div>
+<div id="積み上げ棒グラフ" class="section level1" number="14">
+<h1 number="14"><span class="header-section-number">14</span> 積み上げ棒グラフ</h1>
+<p>正直、積み上げ棒グラフ使うより折れ線グラフの方が視認性が高い。</p>
+<p>使用は非推奨です。</p>
+<pre class="r"><code>data %&gt;% 
+  ggplot(aes(x = year,
+             y = smd)) +
+  geom_bar(aes(fill = party_jpn), 
+           stat = &quot;identity&quot;) +
+  labs(x = &quot;実施年&quot;, 
+       y = &quot;当選者数&quot;,
+       title = &quot;1996～2017年衆院選: 各政党の当選者数&quot;,
+       fill = NULL) + # fill = で生成されたlegendのタイトルを変更する
+  geom_label(aes(label = smd,
+                 group = party_jpn),
+             size = 3,
+             position = position_stack(vjust = 0.5)) +
+  theme(legend.position = c(.06, .85)) # legendの位置を動かす</code></pre>
+<p><img src="Barplot_files/figure-html/unnamed-chunk-22-1.png" width="768" style="display: block; margin: auto;" /></p>
+<HR>
+<p>この記事のコードをまとめたものは<a href="https://github.com/FruitGranola/R_Barplot">Github</a>にあります。</p>
+</div>
+
+<div id="rmd-source-code">LS0tDQp0aXRsZTogIkJhcnBsb3QiDQpkYXRlOiAiYHIgU3lzLnRpbWUoKWAiDQotLS0NCg0KYGBge3J9DQprbml0cjo6b3B0c19jaHVuayRzZXQod2FybmluZyA9IEYsDQogICAgICAgICAgICAgICAgICAgICAgbWVzc2FnZSA9IEYsDQogICAgICAgICAgICAgICAgICAgICAgY29tbWVudCA9ICIiLA0KICAgICAgICAgICAgICAgICAgICAgIGZpZy5hbGlnbiA9ICJjZW50ZXIiLA0KICAgICAgICAgICAgICAgICAgICAgIGZpZy53aWR0aCA9IDgsDQogICAgICAgICAgICAgICAgICAgICAgZmlnLmhlaWdodCA9IDUpDQpgYGANCg0KIyDkvb/nlKjjgZnjgovjg5Hjg4PjgrHjg7zjgrgNCg0K5rqW5YKZ44GX44Gm44GE44Gq44GE44OR44OD44Kx44O844K444GvYGluc3RhbGwucGFja2FnZXMoInBhY2tnZV9uYW1lIilg44Gn44Kk44Oz44K544OI44O844Or44GZ44KL44CCDQoNCmBgYHtyfQ0KIyDkvb/nlKjjgZnjgovjg5Hjg4PjgrHjg7zjgrgNCmxpYnJhcnkodGlkeXZlcnNlKSAjIOODh+ODvOOCv+OBruaVtOW9ouOBi+OCieWPr+imluWMluOBvuOBpw0KbGlicmFyeShtYWdyaXR0cikgIyDjg5HjgqTjg5flh6bnkIbjgpLkvb/jgYTjgZPjgarjgZnjgZvvvIENCmxpYnJhcnkoZ2doaWdobGlnaHQpICMg6YeN6KaB44Gq44OH44O844K/44KS5by36Kq/44GZ44KLDQoNCiMgZ2dwbG90MiDjga4gdGhlbWUg44KS44GC44KJ44GL44GY44KB6Kit5a6a44GX44Gm44GK44GPDQp0aGVtZV9zZXQodGhlbWVfbWluaW1hbChiYXNlX3NpemUgPSAxNSkpDQpgYGANCg0KIyDjg4fjg7zjgr/jga7oqq3jgb/ovrzjgb8NCg0K5LuK5Zue5L2/55So44GZ44KL44Gu44Gv6KGG6Zmi6YG444Gr5Ye66aas44GX44Gf5ZCE5YCZ6KOc6ICF44Gu44OH44O844K/44Gg44CCDQoNCjE5OTblubTjgYvjgokyMDE35bm044G+44Gn44Gu44OH44O844K/44GM6Kmw44G+44Gj44Gm44GE44KL44CCDQoNCuODh+ODvOOCv+OBr1vjgZPjgaHjgoldKC4vZGF0YS9Ib3VzZV9vZl9Db3VuY2lsb3JzXzE5OTZfMjAxNy5jc3YpDQoNCmBgYHtyfQ0KZGF0YSA8LSByZWFkX2NzdigiLi9kYXRhL0hvdXNlX29mX0NvdW5jaWxvcnNfMTk5Nl8yMDE3LmNzdiIpICMgMTk5NuW5tO+9njIwMTflubTjgb7jgafjga7ooYbpmaLpgbjjg4fjg7zjgr8NCmBgYA0KDQojIyDjg4fjg7zjgr/lhoXjga7lpInmlbDlkI3jgpLnorroqo3jgZnjgosNCg0K44Gp44KT44Gq5aSJ5pWw44GM44GC44KL44GL6KaL44Gm44G/44KI44GG44CCDQoNCmBgYHtyfQ0KbmFtZXMoZGF0YSkNCmBgYA0KDQrlkITlpInmlbDjgYzmhI/lkbPjgZnjgovjgoLjga7jga/ku6XkuIvjga7jgojjgYbjgavjgarjgaPjgabjgYTjgovjgIINCg0KfOWkieaVsOWQjSAgICB85YaF5a65ICAgIOOAgHzlgpnogIMgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgfA0KfC0tLS0tLS0tLS18LS0tLS0tLS0tLXwtLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLXwNCnx5ZWFyICAgICAgfOWun+aWveW5tCAg44CAfCAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgfA0KfGt1ICAgICAgICB86YO96YGT5bqc55yMICB8ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICB8DQp8a3VuICAgICAgIHzljLrln58gICAg44CAfCAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgfA0KfHN0YXR1cyAgICB854++6IG344GL5ZCm44GLfDAgPSDmlrDkurrjg7vlhYMsIDEgPSDnj77ogbcgICAgICAgICAgICAgICAgfA0KfG5hbWUgICAgICB85ZCN5YmNICAgICAgfCAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgfA0KfHBhcnR5ICAgICB85omA5bGe5pS/5YWaICB844Ot44O844Oe5a2X44Gn44Gu55Wl6KqeICAgICAgICAgICAgICAgICAgICAgIHwNCnxwYXJ0eV9jb2RlfOaJgOWxnuaUv+WFmiAgfOaVsOWtl+OBp+mAmuOBl+eVquWPtyAgICAgICAgICAgICAgICAgICAgICAgIHwNCnxwcmV2aW91cyAgfOW9k+mBuOWbnuaVsCAgfCAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgfA0KfHdsICAgICAgICB85b2T6JC957WQ5p6c44CAfDAgPSDokL3pgbgsIDEgPSDlvZPpgbgsIDIgPSDlvqnmtLvlvZPpgbggICAgICB8DQp8dm90ZXNoYXJlIHzlvpfnpajnjocgICAgfOWNmOS9jTogJSAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICB8DQp8YWdlICAgICAgIHzlubTpvaIgICAgICB8ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICB8DQp8bm9jYW5kICAgIHzlgJnoo5zogIXmlbAgIHwgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIHwNCnxyYW5rICAgICAgfOmghuS9jeOAgOOAgOOAgHwgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIHwNCnx2b3RlICAgICAgfOW+l+elqOaVsOOAgOOAgHwgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIHwNCnxlbGlnaWJsZSAgfOacieaoqeiAheaVsCAgfCAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgfA0KfHR1cm5vdXQJIHzmipXnpajnjocgICAgfOWNmOS9jTogJSAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICB8DQp8ZXhwCSAgICAgfOmBuOaMmeiyu+eUqCAgfOWNmOS9jTog5YaGICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgfA0KfGV4cG0gICAgICB86YG45oyZ6LK755So44CAfOWNmOS9jTog55m+5LiH5YaGICAgICAgICAgICAgICAgICAgICAgICAgICB8DQp8dnMJICAgICAgIHzlvpfnpajlibLlkIggIHzlsI/mlbDjgafooajoqJggICAgICAgICAgICAgICAgICAgICAgICAgICAgfA0KfGV4cHB2ICAgICB86YG45oyZ6LK755SoICB85Y2Y5L2NOiDlhobvvIjmnInmqKnogIXkuIDkurrlvZPjgZ/jgorjga7pgbjmjJnosrvnlKjvvIl8DQp8c21kCSAgICAgfOW9k+iQvSAgICAgIHwwID0g6JC96YG4LCAxID0g5b2T6YG4ICAgICAgICAgICAgICAgICAgICB8DQp8cGFydHlfanBuIHzmiYDlsZ7mlL/lhZrjgIB85pel5pys6KqeICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICB8DQoNCiMjIOODh+ODvOOCv+OBruaVtOW9og0KDQrku4rlm57jga/lvZPpgbjogIXmlbDjgpLkvb/jgaPjgabmo5LjgrDjg6njg5XjgpLmj4/jgYTjgabjgYTjgY/jgIINCg0K5qOS44Kw44Op44OV44Gv6KSH5pWw44Gu5bGe5oCn44KS5q+U6LyD44GZ44KL6Zqb44Gr5L2/55So44GZ44KL44CC5L6L44GI44Gw44CB5ZCE5Zyw44Gu56mN6Zuq6YeP44KS5q+U6LyD44GZ44KL6Zqb44Gr5L2/55So44GV44KM44KL44CCDQoNCuS7iuWbnuOBr+mBuOaMmeODh+ODvOOCv+OCkuS9v+eUqOOBmeOCi+OBruOBp+OAgeWQhOaUv+WFmuOBruW9k+mBuOiAheaVsOOCkuWPr+imluWMluOBl+OBpuOBv+OCi+OAgg0KDQpgYGB7cn0NCmRhdGEgJTw+JSANCiAgZ3JvdXBfYnkoeWVhciwgcGFydHlfanBuKSAlPiUgIyDlubTjgZTjgajjgIHlkITmlL/lhZrjgZTjgajjgavlh6bnkIbjgpLooYzjgYYNCiAgc3VtbWFyaXNlKHNtZCA9IHN1bShzbWQpKSAlPiUgICMg5ZCE5pS/5YWa44Gu5b2T6YG46ICF5pWw44KS6KiI566XDQogIGZpbHRlcihwYXJ0eV9qcG4gJWluJSBjKCLoh6rmsJHlhZoiLCAi5rCR5Li75YWaIiwgIuWFrOaYjuWFmiIpKSAlPiUgDQogIGFzLmRhdGEuZnJhbWUoKSAlPiUgIyDkuIDlv5wNCiAgZHJvcF9uYSgpICMgbmHjgpLokL3jgajjgZkNCmBgYA0KDQrjgb7jgZ/jgIEyMDA15bm044Gu6KGG6Zmi6YG444OH44O844K/44KS5Y+v6KaW5YyW44GZ44KL44GT44Go44Go44GZ44KL44CCDQoNCmBgYHtyfQ0KZGF0YV8yMDA1IDwtIGRhdGEgJT4lIA0KICBmaWx0ZXIoeWVhciA9PSAyMDA1KQ0KYGBgDQoNCiMg5pmu6YCa44Gu5qOS44Kw44Op44OVDQoNCmBgYHtyfQ0KZGF0YV8yMDA1ICU+JSANCiAgZ2dwbG90KGFlcyh4ID0gcGFydHlfanBuLCANCiAgICAgICAgICAgICB5ID0gc21kKSkgKw0KICBnZW9tX2JhcihzdGF0ID0gImlkZW50aXR5IikgKw0KICBsYWJzKHggPSBOVUxMLCAjIFjou7jjga7jg6njg5njg6vlkI3jgpLlpInjgYjjgovjgIBOVUxM44KS5LiO44GI44KL44Go54Sh44GP44Gq44KLDQogICAgICAgeSA9ICLlvZPpgbjogIXmlbAiLCAjIFnou7jjga7jg6njg5njg6vlkI3jgpLlpInjgYjjgosNCiAgICAgICB0aXRsZSA9ICIyMDA15bm06KGG6Zmi6YG4OiDlkITmlL/lhZrjga7lvZPpgbjogIXmlbAiKSAjIOOCsOODqeODleOBq+OCv+OCpOODiOODq+OCkuS7mOOBkeOCiw0KYGBgDQoNCiMg5qOS44Gu6Imy44KS5aSJ44GI44KLDQoNCmdncGxvdDLjgafkvb/nlKjjgafjgY3jgovoibLjga7jg6rjgrnjg4jjga9b44GT44Gh44KJXSguL2RvY3VtZW50L2dncGxvdDJfY29sb3ItbGlzdC5wZGYpDQoNCmBgYHtyfQ0KZGF0YV8yMDA1ICU+JSANCiAgZ2dwbG90KGFlcyh4ID0gcGFydHlfanBuLA0KICAgICAgICAgICAgIHkgPSBzbWQpKSArDQogIGdlb21fYmFyKHN0YXQgPSAiaWRlbnRpdHkiLA0KICAgICAgICAgICBjb2xvciA9ICJibGFjayIsICMg5qOS44Gu5p6g44Gu6Imy44KS5aSJ44GI44KLDQogICAgICAgICAgIGZpbGwgPSAib3JhbmdlIikgKyAjIOajkuOBruS4reOBruiJsuOCkuWkieOBiOOCiw0KICBsYWJzKHggPSBOVUxMLCANCiAgICAgICB5ID0gIuW9k+mBuOiAheaVsCIsDQogICAgICAgdGl0bGUgPSAiMjAwNeW5tOihhumZoumBuDog5ZCE5pS/5YWa44Gu5b2T6YG46ICF5pWwIikgDQpgYGANCg0KIyDmo5Ljga7kuKbjgbPmm7/jgYgNCg0K44KI44KK6KaL44KE44GZ44GE5qOS44Kw44Op44OV44KS5L2c44KL44Gu44Gr44CB5aSn44GN44GE6aCG44KE5bCP44GV44GE6aCG44Gr5Lim44Gz5aSJ44GI44KL44GT44Go44Gv6Z2e5bi444Gr5pyJ5Yq544Gg44CCDQoNCmBmY3RfcmVvcmRlcih4LCB5LCAuZGVzYyA9IFQpYOOBp1njgYzlpKfjgY3jgYTpoIbjgatY44KS5Lim44Gz5aSJ44GI44KL44CCDQoNCmdncGxvdDLjga7jgrPjg7zjg4nlhoXjgafoqIjnrpfjgZnjgovjga7jga/jgYrjgZnjgZnjgoHjgZfjgarjgYTjgILjgarjgovjgbnjgY9nZ3Bsb3Qy44Gu44Kz44O844OJ5aSW44Gn6KiI566X44KS6KGM44GG44CCDQoNCmBgYHtyfQ0KZGF0YV8yMDA1ICU8PiUgbXV0YXRlKHBhcnR5X2pwbiA9IGZjdF9yZW9yZGVyKHBhcnR5X2pwbiwgc21kLCAuZGVzYyA9IFQpKSANCmBgYA0KDQpgYGB7cn0NCmRhdGFfMjAwNSAlPiUgDQogIGdncGxvdChhZXMoeCA9IHBhcnR5X2pwbiwgDQogICAgICAgICAgICAgeSA9IHNtZCkpICsNCiAgZ2VvbV9iYXIoc3RhdCA9ICJpZGVudGl0eSIpICsNCiAgbGFicyh4ID0gTlVMTCwNCiAgICAgICB5ID0gIuW9k+mBuOiAheaVsCIsDQogICAgICAgdGl0bGUgPSAiMjAwNeW5tOihhumZoumBuDog5ZCE5pS/5YWa44Gu5b2T6YG46ICF5pWwIikgDQpgYGANCg0KIyBZ44Gu5YCk44KS44Op44OZ44Or44Gn6KGo56S644GZ44KLDQoNCuWkp+OBjeOBhOmghuOChOWwj+OBleOBhOmghuOBq+S4puOBs+WkieOBiOOBpuOCgue0sOOBi+OBhOaVsOWApOOBjOiqreOBv+WPluOCjOOCi+OCj+OBkeOBp+OBr+OBquOBhOOAgg0KDQrjgZ3jga7jgZ/jgoHjgIHjg6njg5njg6vjgpLku5jjgZHjgovjgajjgojjgoropovjgoTjgZnjgYTmo5LjgrDjg6njg5XjgavjgarjgovjgIINCg0K44G+44Gf44CBYHBhc3RlKClg44KS5L2/44GG44Go5pWw5YCk44Gu5b6M44Gr5Y2Y5L2N44KS5LuY44GR44KJ44KM44KL44CCDQoNCuOBneOBruWgtOWQiOOBr+OAgWBwYXN0ZShzbWQsICLkuroiLCBzZXAgPSAiIilg44KSYGxhYmVsID0gYOOBq+S7o+WFpeOBmeOCi+OAgg0KDQpgYGB7cn0NCmRhdGFfMjAwNSAlPiUgDQogIGdncGxvdChhZXMoeCA9IHBhcnR5X2pwbiwNCiAgICAgICAgICAgICB5ID0gc21kKSkgKw0KICBnZW9tX2JhcihzdGF0ID0gImlkZW50aXR5IikgKw0KICBsYWJzKHggPSBOVUxMLCANCiAgICAgICB5ID0gIuW9k+mBuOiAheaVsCIsDQogICAgICAgdGl0bGUgPSAiMjAwNeW5tOihhumZoumBuDog5ZCE5pS/5YWa44Gu5b2T6YG46ICF5pWwIikgKw0KICBnZW9tX2xhYmVsKGFlcyhsYWJlbCA944CAc21kKSwgIyDjg6njg5njg6vjga7mlbDlgKQNCiAgICAgICAgICAgICBzaXplID0gOCwgIyDjg6njg5njg6vjga7jgrXjgqTjgroNCiAgICAgICAgICAgICBwb3NpdGlvbiA9IHBvc2l0aW9uX3N0YWNrKHZqdXN0ID0gMC41KSkgIyDjg6njg5njg6vjga7kvY3nva4gDQpgYGANCg0KIyDnibnlrprjga7mo5Ljga7oibLjgpLlpInjgYjjgosNCg0K5Zuz44Gu5Lit44Gr44CB6KaW57ea44KS6ZuG5Lit44GV44Gb44Gf44GE5qOS44GM44GC44KL5aC05ZCI44Gv6Imy44KS5rS755So44GX44KI44GG44CCDQoNCuOBvuOBmuOBr+OAgeazqOebruOBleOBm+OBn+OBhOOCguOBruOCkjHjgIHjgZ3jgozku6XlpJbjgpIw44Go44GZ44KL44OA44Of44O85aSJ5pWw44KS5L2c5oiQ44GZ44KL44CCDQoNCmBgYHtyfQ0KZGF0YV8yMDA1ICU8PiUgbXV0YXRlKGxkcCA9IGlmX2Vsc2UocGFydHlfanBuID09ICLoh6rmsJHlhZoiLCAxLCAwKSkNCmBgYA0KDQpgYGB7cn0NCmRhdGFfMjAwNSAlPiUgDQogIGdncGxvdChhZXMoeCA9IHBhcnR5X2pwbiwgICAgICAgICAgICAgICAgICANCiAgICAgICAgICAgICB5ID0gc21kKSkgKyANCiAgZ2VvbV9iYXIoYWVzKGZpbGwgPSBmYWN0b3IobGRwKSksICMgbGRw44Gu5YCk44Gr44KI44Gj44Gm6Imy44KS5aSJ44GI44KLDQogICAgICAgICAgIHN0YXQgPSAiaWRlbnRpdHkiLA0KICAgICAgICAgICBzaG93LmxlZ2VuZCA9IEYpICsgIyBzaG93LmxlZ2VuZCA9IEbjgadsZWdlbmTjgpLpnZ7ooajnpLrjgasNCiAgbGFicyh4ID0gTlVMTCwNCiAgICAgICB5ID0gIuW9k+mBuOiAheaVsCIsIA0KICAgICAgIHRpdGxlID0gIjIwMDXlubTooYbpmaLpgbg6IOWQhOaUv+WFmuOBruW9k+mBuOiAheaVsCIpICsNCiAgZ2VvbV9sYWJlbChhZXMobGFiZWwgPSBzbWQpLCAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICANCiAgICAgICAgICAgICBzaXplID0gOCwgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgDQogICAgICAgICAgICAgcG9zaXRpb24gPSBwb3NpdGlvbl9zdGFjayh2anVzdCA9IDAuNSkpIA0KYGBgDQoNCuacieW9qeiJsuOBqOeEoeW9qeiJsuOBp+iJsuWIhuOBkeOCkuOBmeOCi+OBqOOAgeOCiOOCiuajkuOCkuW8t+iqv+OBmeOCi+OBk+OBqOOBjOOBp+OBjeOCi+OAgg0KDQrku4rlm57jga/otaTjgajjgrDjg6zjg7zjgafoibLliIbjgZHjgZfjgabjgb/jgZ/jgIINCg0KYGBge3J9DQpkYXRhXzIwMDUgJT4lIA0KICBnZ3Bsb3QoYWVzKHggPSBwYXJ0eV9qcG4sICAgICAgICAgICAgICAgICAgDQogICAgICAgICAgICAgeSA9IHNtZCkpICsgDQogIGdlb21fYmFyKGFlcyhmaWxsID0gZmFjdG9yKGxkcCkpLCANCiAgICAgICAgICAgc3RhdCA9ICJpZGVudGl0eSIsDQogICAgICAgICAgIHNob3cubGVnZW5kID0gRikgKw0KICBsYWJzKHggPSBOVUxMLA0KICAgICAgIHkgPSAi5b2T6YG46ICF5pWwIiwgDQogICAgICAgdGl0bGUgPSAiMjAwNeW5tOihhumZoumBuDog5ZCE5pS/5YWa44Gu5b2T6YG46ICF5pWwIikgKw0KICBnZW9tX2xhYmVsKGFlcyhsYWJlbCA9IHNtZCksICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIA0KICAgICAgICAgICAgIHNpemUgPSA4LCAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICANCiAgICAgICAgICAgICBwb3NpdGlvbiA9IHBvc2l0aW9uX3N0YWNrKHZqdXN0ID0gMC41KSkgKw0KICBzY2FsZV9maWxsX21hbnVhbCh2YWx1ZXMgPSBjKCJncmV5IiwicmVkIikpICMgdmFsdWVzID0gYygiY29sb3IwIiwiY29sb3IxIinjgafoibLjgpLpgbjjgbYNCmBgYA0KDQojIGdnaGlnaGxpZ2h044KS5L2/44Gj44Gf5aC05ZCIDQoNCuewoeWNmOOBq+OCsOODqeODleOBruW8t+iqv+OCkuihjOOBhuODkeODg+OCseODvOOCuOOBqOOBl+OBpmBnZ2hpZ2hsaWdodGDjgYzjgYLjgovjgIINCg0K44Gf44Gg44GX44CBYGdnaGlnaGxpZ2h0YOOBr+OCguOBo+OBqOWkp+mHj+OBruODh+ODvOOCv+OBi+OBpOOAgee3muOCsOODqeODleOBq+S9v+OBhuOBu+OBhuOBjOS4gOiIrOeahOOBoOOCjeOBhuOAgg0KDQrjgb7jgZ/jgIFgc2NhbGVfZmlsbF9tYW51YWwoKWDjgpLkvb/jgYjjgbDoibLjgpLpgbjjgbnjgovjgIINCg0KYGBge3J9DQpkYXRhXzIwMDUgJT4lIA0KICBnZ3Bsb3QoYWVzKHggPSBwYXJ0eV9qcG4sICAgICAgICAgICAgICAgICAgDQogICAgICAgICAgICAgeSA9IHNtZCkpICsgDQogIGdlb21fYmFyKGFlcyhmaWxsID0gcGFydHlfanBuKSwNCiAgICAgICAgICAgc3RhdCA9ICJpZGVudGl0eSIsDQogICAgICAgICAgIHNob3cubGVnZW5kID0gRikgKw0KICBsYWJzKHggPSBOVUxMLCANCiAgICAgICB5ID0gIuW9k+mBuOiAheaVsCIsIA0KICAgICAgIHRpdGxlID0gIjIwMDXlubTooYbpmaLpgbg6IOWQhOaUv+WFmuOBruW9k+mBuOiAheaVsCIpICsNCiAgZ2VvbV9sYWJlbChhZXMobGFiZWwgPSBzbWQpLCAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICANCiAgICAgICAgICAgICBzaXplID0gOCwgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgDQogICAgICAgICAgICAgcG9zaXRpb24gPSBwb3NpdGlvbl9zdGFjayh2anVzdCA9IDAuNSkpICsNCiAgZ2doaWdobGlnaHQocGFydHlfanBuICVpbiUgYygi6Ieq5rCR5YWaIiwgIuawkeS4u+WFmiIpKSAjIGdnaGlnaGxpZ2h0KCnjga7kuK3jgavoibLjgIXmnaHku7bjgpLlhaXjgozjgosNCmBgYA0KDQojIOaPj+eUu+evhOWbsuOBruioreWumg0KDQrmo5LjgrDjg6njg5Xjga7kuIrjga7jgbvjgYbjgYzoqbDjgb7jgorjgZnjgY7jgovjgajopovjgYjjgaXjgonjgYTjgZPjgajjgYzjgYLjgovjgIINCg0K44G+44Gf44CB44Op44OZ44Or44KS5qOS44Gu5LiK44Gr5LuY44GR44KL44Go6KaL5YiH44KM44KL44GT44Go44GM44GC44KL44CC44Gd44GG44GE44GG44Go44GN44Gv5o+P55S756+E5Zuy44KS6Kq/5pW044GZ44KL44CCDQoNCmBgYHtyfQ0KZGF0YV8yMDA1ICU+JSANCiAgZ2dwbG90KGFlcyh4ID0gcGFydHlfanBuLCAgICAgICAgICAgICAgICAgIA0KICAgICAgICAgICAgIHkgPSBzbWQpKSArDQogIGdlb21fYmFyKHN0YXQgPSAiaWRlbnRpdHkiKSArIA0KICBsYWJzKHggPSBOVUxMLA0KICAgICAgIHkgPSAi5b2T6YG46ICF5pWwIiwNCiAgICAgICB0aXRsZSA9ICIyMDA15bm06KGG6Zmi6YG4OiDlkITmlL/lhZrjga7lvZPpgbjogIXmlbAiKSArDQogIGdlb21fbGFiZWwoYWVzKGxhYmVsID0gc21kKSwgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgDQogICAgICAgICAgICAgc2l6ZSA9IDgpICsNCiAgbGltcyh5ID0gYygwLCAyNTApKSAjIHnou7jjgpIw772eMjUw44G+44Gn6KGo56S644GZ44KLDQpgYGANCg0KIyBY44Oh44Oi44Oq44Gu5pON5L2cDQoNCnjjgYzjgqvjg4bjgrTjg6rjgqvjg6vlpInmlbDjga7loLTlkIjjgIHjgZPjga7jgojjgYbjgarlt6XlpKvjgaflm7PjgpLliIbjgYvjgorjgoTjgZnjgY/jgafjgY3jgovjgIINCg0KYGBge3J9DQpkYXRhXzIwMDUgJT4lIA0KICBnZ3Bsb3QoYWVzKHggPSBwYXJ0eV9qcG4sICAgICAgICAgICAgICAgICAgDQogICAgICAgICAgICAgeSA9IHNtZCkpICsNCiAgZ2VvbV9iYXIoc3RhdCA9ICJpZGVudGl0eSIpICsgICAgICAgDQogIGxhYnMoeCA9IE5VTEwsDQogICAgICAgeSA9ICLlvZPpgbjogIXmlbAiLA0KICAgICAgIHRpdGxlID0gIjIwMDXlubTooYbpmaLpgbg6IOWQhOaUv+WFmuOBruW9k+mBuOiAheaVsCIpICsNCiAgZ2VvbV9sYWJlbChhZXMobGFiZWwgPSBzbWQpLA0KICAgICAgICAgICAgIHNpemUgPSA4LCAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICANCiAgICAgICAgICAgICBwb3NpdGlvbiA9IHBvc2l0aW9uX3N0YWNrKHZqdXN0ID0gMC41KSkgKw0KICBzY2FsZV94X2Rpc2NyZXRlKGxhYmVscyA9IGMoIuiHquawkeWFmiIgPSAi6Ieq5rCR5YWaXG4oMzQ25Lq6KSIsICMg6Ieq5rCR5YWa44KS6Ieq5rCR5YWaXG4o5YCZ6KOc6ICF5pWwKeOBqw0KICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIuawkeS4u+WFmiIgPSAi5rCR5Li75YWaXG4oMjk55Lq6KSIsICMg5rCR5Li75YWa44KS5rCR5Li75YWaXG4o5YCZ6KOc6ICF5pWwKeOBqw0KICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIuWFrOaYjuWFmiIgPSAi5YWs5piO5YWaXG4oNTLkuropIikpICMg5YWs5piO5YWa44KS5YWs5piO5YWaXG4o5YCZ6KOc6ICF5pWwKeOBqw0KYGBgDQoNCiMgWeODoeODouODquOBruaTjeS9nA0KDQrjg6Hjg6Ljg6rjga7liLvjgb/jgpLlopfjgoTjgZfjgZ/jgorjgIHjg6Hjg6Ljg6rjga7nr4Tlm7LjgpLliLbpmZDjgZfjgZ/jgorjgafjgY3jgovjgIINCg0K44GC44GP44G+44Gn44KC44Oh44Oi44Oq44Gu6Kq/5pW044Gq44Gu44Gn44CBYHhsaW0oKWDjgoRgeWxpbSgpYOOBqOOBr+WIpeeJqeOBoOOAgg0KDQpgYGB7cn0NCmRhdGFfMjAwNSAlPiUgDQogIGdncGxvdChhZXMoeCA9IHBhcnR5X2pwbiwgICAgICAgICAgICAgICAgICANCiAgICAgICAgICAgICB5ID0gc21kKSkgKw0KICBnZW9tX2JhcihzdGF0ID0gImlkZW50aXR5IikgKyAgICAgICANCiAgbGFicyh4ID0gTlVMTCwNCiAgICAgICB5ID0gIuW9k+mBuOiAheaVsCIsDQogICAgICAgdGl0bGUgPSAiMjAwNeW5tOihhumZoumBuDog5ZCE5pS/5YWa44Gu5b2T6YG46ICF5pWwIikgKw0KICBnZW9tX2xhYmVsKGFlcyhsYWJlbCA9IHNtZCksICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIA0KICAgICAgICAgICAgIHNpemUgPSA4LCAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICANCiAgICAgICAgICAgICBwb3NpdGlvbiA9IHBvc2l0aW9uX3N0YWNrKHZqdXN0ID0gMC41KSkgKw0KICBzY2FsZV94X2Rpc2NyZXRlKGxhYmVscyA9IGMoIuiHquawkeWFmiIgPSAi6Ieq5rCR5YWaXG4oMzQ25Lq6KSIsIA0KICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIuawkeS4u+WFmiIgPSAi5rCR5Li75YWaXG4oMjk55Lq6KSIsIA0KICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIuWFrOaYjuWFmiIgPSAi5YWs5piO5YWaXG4oNTLkuropIikpICsgDQogIHNjYWxlX3lfY29udGludW91cyhicmVha3MgPSBzZXEoMCwgMjIwLCBsZW5ndGggPSAxMikpICMg44Oh44Oi44Oq44Gu56+E5Zuy44Go5Yi744G/44KS5rG644KB44KLDQpgYGANCg0KIyDjgrDjg6njg5XjgpLlm57ou6LjgZXjgZvjgosNCg0KeOOBjOWil+OBiOOCi+OBqOaWh+Wtl+OBjOmHjeOBquOBo+OBpuimi+OBiOOBq+OBj+OBj+OBquOCi+OAguaWh+Wtl+OBruinkuW6puOCkuWkieOBiOOBpuOCguOBhOOBhOOBjOOAgeimluiqjeaAp+OBjOS9juS4i+OBmeOCi+OAgg0KDQrjgZ3jga7jgZ/jgoHjgIHjgrDjg6njg5XjgpLlm57ou6LjgZnjgovjgZPjgajjgpLjgYrjgZnjgZnjgoHjgZnjgovjgIINCg0KYGBge3J9DQpkYXRhXzIwMDUgJT4lIA0KICBnZ3Bsb3QoYWVzKHggPSBwYXJ0eV9qcG4sICAgICAgICAgICAgICAgICAgDQogICAgICAgICAgICAgeSA9IHNtZCkpICsNCiAgZ2VvbV9iYXIoc3RhdCA9ICJpZGVudGl0eSIpICsgICAgICAgDQogIGxhYnMoeCA9IE5VTEwsDQogICAgICAgeSA9ICLlvZPpgbjogIXmlbAiLA0KICAgICAgIHRpdGxlID0gIjIwMDXlubTooYbpmaLpgbg6IOWQhOaUv+WFmuOBruW9k+mBuOiAheaVsCIpICsNCiAgZ2VvbV9sYWJlbChhZXMobGFiZWwgPSBzbWQpLCAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICANCiAgICAgICAgICAgICBzaXplID0gOCwgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgDQogICAgICAgICAgICAgcG9zaXRpb24gPSBwb3NpdGlvbl9zdGFjayh2anVzdCA9IDAuNSkpICsNCiAgY29vcmRfZmxpcCgpICMgY29vcmRfZmxpcCgp44Gn44Kw44Op44OV44KS5Zue6Lui44GV44Gb44KL44CCDQpgYGANCg0KIyDlrp/mlr3lubTmr47jga7mo5LjgrDjg6njg5UNCg0K5bCP6KaP5qih44Gq5pmC57O75YiX44OH44O844K/44Gv5qOS44Kw44Op44OV44Gn6Imv44GE44Gg44KN44GG44CCDQoNCuOBn+OBoOOAgeWkp+imj+aooeOBquaZguezu+WIl+ODh+ODvOOCv+OBr+e0oOebtOOBq+aKmOOCjOe3muOCsOODqeODleOCkuS9v+OBo+OBn+OBu+OBhuOBjOimi+OChOOBmeOBhOOAgg0KDQrku4rlm57jga/mipjjgoznt5rjgrDjg6njg5Xjga7jgbvjgYbjgYzoppboqo3mgKfjgYzpq5jjgYTjgaDjgo3jgYbjgIINCg0KYGBge3J9DQpkYXRhICU8PiUgbXV0YXRlKHllYXIgPSBmY3RfcmVvcmRlcihhcy5mYWN0b3IoeWVhciksIHllYXIsIC5kZXNjID0gRikpIA0KYGBgDQoNCmBgYHtyfQ0KZGF0YSAlPiUgDQogIGdncGxvdChhZXMoeCA9IHBhcnR5X2pwbiwNCiAgICAgICAgICAgICB5ID0gc21kKSkgKw0KICBnZW9tX2JhcihhZXMoZmlsbCA9IHBhcnR5X2pwbiksIA0KICAgICAgICAgICBzdGF0ID0gImlkZW50aXR5IiwNCiAgICAgICAgICAgc2hvdy5sZWdlbmQgPSBGKSArDQogIGxhYnMoeCA9IE5VTEwsDQogICAgICAgeSA9ICLlvZPpgbjogIXmlbAiLCANCiAgICAgICB0aXRsZSA9ICIxOTk2772eMjAxN+W5tOihhumZoumBuDog5ZCE5pS/5YWa44Gu5b2T6YG46ICF5pWwIikgKw0KICBnZW9tX2xhYmVsKGFlcyhsYWJlbCA9IHNtZCksIA0KICAgICAgICAgICAgIHBvc2l0aW9uID0gcG9zaXRpb25fc3RhY2sodmp1c3QgPSAuOSksDQogICAgICAgICAgICAgc2l6ZSA9IDMpICsgDQogIGZhY2V0X3dyYXAofiB5ZWFyKSANCmBgYA0KDQojIOepjeOBv+S4iuOBkuajkuOCsOODqeODlQ0KDQrmraPnm7TjgIHnqY3jgb/kuIrjgZLmo5LjgrDjg6njg5Xkvb/jgYbjgojjgormipjjgoznt5rjgrDjg6njg5Xjga7mlrnjgYzoppboqo3mgKfjgYzpq5jjgYTjgIINCg0K5L2/55So44Gv6Z2e5o6o5aWo44Gn44GZ44CCDQoNCmBgYHtyfQ0KZGF0YSAlPiUgDQogIGdncGxvdChhZXMoeCA9IHllYXIsDQogICAgICAgICAgICAgeSA9IHNtZCkpICsNCiAgZ2VvbV9iYXIoYWVzKGZpbGwgPSBwYXJ0eV9qcG4pLCANCiAgICAgICAgICAgc3RhdCA9ICJpZGVudGl0eSIpICsNCiAgbGFicyh4ID0gIuWun+aWveW5tCIsIA0KICAgICAgIHkgPSAi5b2T6YG46ICF5pWwIiwNCiAgICAgICB0aXRsZSA9ICIxOTk2772eMjAxN+W5tOihhumZoumBuDog5ZCE5pS/5YWa44Gu5b2T6YG46ICF5pWwIiwNCiAgICAgICBmaWxsID0gTlVMTCkgKyAjIGZpbGwgPSDjgafnlJ/miJDjgZXjgozjgZ9sZWdlbmTjga7jgr/jgqTjg4jjg6vjgpLlpInmm7TjgZnjgosNCiAgZ2VvbV9sYWJlbChhZXMobGFiZWwgPSBzbWQsDQogICAgICAgICAgICAgICAgIGdyb3VwID0gcGFydHlfanBuKSwNCiAgICAgICAgICAgICBzaXplID0gMywNCiAgICAgICAgICAgICBwb3NpdGlvbiA9IHBvc2l0aW9uX3N0YWNrKHZqdXN0ID0gMC41KSkgKw0KICB0aGVtZShsZWdlbmQucG9zaXRpb24gPSBjKC4wNiwgLjg1KSkgIyBsZWdlbmTjga7kvY3nva7jgpLli5XjgYvjgZkNCmBgYA0KDQo8SFI+DQoNCuOBk+OBruiomOS6i+OBruOCs+ODvOODieOCkuOBvuOBqOOCgeOBn+OCguOBruOBr1tHaXRodWJdKGh0dHBzOi8vZ2l0aHViLmNvbS9GcnVpdEdyYW5vbGEvUl9CYXJwbG90KeOBq+OBguOCiuOBvuOBmeOAgg0K</div>
+
+
+</div>
+</div>
+
+</div>
+
+<script>
+
+// add bootstrap table styles to pandoc tables
+function bootstrapStylePandocTables() {
+  $('tr.odd').parent('tbody').parent('table').addClass('table table-condensed');
+}
+$(document).ready(function () {
+  bootstrapStylePandocTables();
+});
+
+
+</script>
+
+<!-- tabsets -->
+
+<script>
+$(document).ready(function () {
+  window.buildTabsets("TOC");
+});
+
+$(document).ready(function () {
+  $('.tabset-dropdown > .nav-tabs > li').click(function () {
+    $(this).parent().toggleClass('nav-tabs-open');
+  });
+});
+</script>
+
+<!-- code folding -->
+<script>
+$(document).ready(function () {
+  window.initializeSourceEmbed("Barplot.Rmd");
+  window.initializeCodeFolding("show" === "show");
+});
+</script>
+
+<script>
+$(document).ready(function ()  {
+
+    // move toc-ignore selectors from section div to header
+    $('div.section.toc-ignore')
+        .removeClass('toc-ignore')
+        .children('h1,h2,h3,h4,h5').addClass('toc-ignore');
+
+    // establish options
+    var options = {
+      selectors: "h1,h2,h3",
+      theme: "bootstrap3",
+      context: '.toc-content',
+      hashGenerator: function (text) {
+        return text.replace(/[.\\/?&!#<>]/g, '').replace(/\s/g, '_');
+      },
+      ignoreSelector: ".toc-ignore",
+      scrollTo: 0
+    };
+    options.showAndHide = true;
+    options.smoothScroll = true;
+
+    // tocify
+    var toc = $("#TOC").tocify(options).data("toc-tocify");
+});
+</script>
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>
