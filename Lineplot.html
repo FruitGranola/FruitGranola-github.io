@@ -1,0 +1,657 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+<meta charset="utf-8" />
+<meta name="generator" content="pandoc" />
+<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
+
+
+
+
+<title>Lineplot</title>
+
+<script src="site_libs/header-attrs-2.7/header-attrs.js"></script>
+<script src="site_libs/jquery-1.11.3/jquery.min.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link href="site_libs/bootstrap-3.3.5/css/united.min.css" rel="stylesheet" />
+<script src="site_libs/bootstrap-3.3.5/js/bootstrap.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/respond.min.js"></script>
+<style>h1 {font-size: 34px;}
+       h1.title {font-size: 38px;}
+       h2 {font-size: 30px;}
+       h3 {font-size: 24px;}
+       h4 {font-size: 18px;}
+       h5 {font-size: 16px;}
+       h6 {font-size: 12px;}
+       code {color: inherit; background-color: rgba(0, 0, 0, 0.04);}
+       pre:not([class]) { background-color: white }</style>
+<script src="site_libs/jqueryui-1.11.4/jquery-ui.min.js"></script>
+<link href="site_libs/tocify-1.9.1/jquery.tocify.css" rel="stylesheet" />
+<script src="site_libs/tocify-1.9.1/jquery.tocify.js"></script>
+<script src="site_libs/navigation-1.1/tabsets.js"></script>
+<script src="site_libs/navigation-1.1/codefolding.js"></script>
+<script src="site_libs/navigation-1.1/sourceembed.js"></script>
+<link href="site_libs/highlightjs-9.12.0/default.css" rel="stylesheet" />
+<script src="site_libs/highlightjs-9.12.0/highlight.js"></script>
+<link href="site_libs/font-awesome-5.1.0/css/all.css" rel="stylesheet" />
+<link href="site_libs/font-awesome-5.1.0/css/v4-shims.css" rel="stylesheet" />
+
+<style type="text/css">
+  code{white-space: pre-wrap;}
+  span.smallcaps{font-variant: small-caps;}
+  span.underline{text-decoration: underline;}
+  div.column{display: inline-block; vertical-align: top; width: 50%;}
+  div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+  ul.task-list{list-style: none;}
+    </style>
+
+<style type="text/css">code{white-space: pre;}</style>
+<script type="text/javascript">
+if (window.hljs) {
+  hljs.configure({languages: []});
+  hljs.initHighlightingOnLoad();
+  if (document.readyState && document.readyState === "complete") {
+    window.setTimeout(function() { hljs.initHighlighting(); }, 0);
+  }
+}
+</script>
+
+
+
+<style type="text/css">
+#rmd-source-code {
+  display: none;
+}
+</style>
+
+
+
+
+
+<style type = "text/css">
+.main-container {
+  max-width: 940px;
+  margin-left: auto;
+  margin-right: auto;
+}
+img {
+  max-width:100%;
+}
+.tabbed-pane {
+  padding-top: 12px;
+}
+.html-widget {
+  margin-bottom: 20px;
+}
+button.code-folding-btn:focus {
+  outline: none;
+}
+summary {
+  display: list-item;
+}
+pre code {
+  padding: 0;
+}
+</style>
+
+
+<style type="text/css">
+.dropdown-submenu {
+  position: relative;
+}
+.dropdown-submenu>.dropdown-menu {
+  top: 0;
+  left: 100%;
+  margin-top: -6px;
+  margin-left: -1px;
+  border-radius: 0 6px 6px 6px;
+}
+.dropdown-submenu:hover>.dropdown-menu {
+  display: block;
+}
+.dropdown-submenu>a:after {
+  display: block;
+  content: " ";
+  float: right;
+  width: 0;
+  height: 0;
+  border-color: transparent;
+  border-style: solid;
+  border-width: 5px 0 5px 5px;
+  border-left-color: #cccccc;
+  margin-top: 5px;
+  margin-right: -10px;
+}
+.dropdown-submenu:hover>a:after {
+  border-left-color: #adb5bd;
+}
+.dropdown-submenu.pull-left {
+  float: none;
+}
+.dropdown-submenu.pull-left>.dropdown-menu {
+  left: -100%;
+  margin-left: 10px;
+  border-radius: 6px 0 6px 6px;
+}
+</style>
+
+<script type="text/javascript">
+// manage active state of menu based on current page
+$(document).ready(function () {
+  // active menu anchor
+  href = window.location.pathname
+  href = href.substr(href.lastIndexOf('/') + 1)
+  if (href === "")
+    href = "index.html";
+  var menuAnchor = $('a[href="' + href + '"]');
+
+  // mark it active
+  menuAnchor.tab('show');
+
+  // if it's got a parent navbar menu mark it active as well
+  menuAnchor.closest('li.dropdown').addClass('active');
+
+  // Navbar adjustments
+  var navHeight = $(".navbar").first().height() + 15;
+  var style = document.createElement('style');
+  var pt = "padding-top: " + navHeight + "px; ";
+  var mt = "margin-top: -" + navHeight + "px; ";
+  var css = "";
+  // offset scroll position for anchor links (for fixed navbar)
+  for (var i = 1; i <= 6; i++) {
+    css += ".section h" + i + "{ " + pt + mt + "}\n";
+  }
+  style.innerHTML = "body {" + pt + "padding-bottom: 40px; }\n" + css;
+  document.head.appendChild(style);
+});
+</script>
+
+<!-- tabsets -->
+
+<style type="text/css">
+.tabset-dropdown > .nav-tabs {
+  display: inline-table;
+  max-height: 500px;
+  min-height: 44px;
+  overflow-y: auto;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.tabset-dropdown > .nav-tabs > li.active:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li.active:before {
+  content: "&#xe258;";
+  border: none;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs > li.active {
+  display: block;
+}
+
+.tabset-dropdown > .nav-tabs > li > a,
+.tabset-dropdown > .nav-tabs > li > a:focus,
+.tabset-dropdown > .nav-tabs > li > a:hover {
+  border: none;
+  display: inline-block;
+  border-radius: 4px;
+  background-color: transparent;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li {
+  display: block;
+  float: none;
+}
+
+.tabset-dropdown > .nav-tabs > li {
+  display: none;
+}
+</style>
+
+<!-- code folding -->
+<style type="text/css">
+.code-folding-btn { margin-bottom: 4px; }
+</style>
+
+
+
+<style type="text/css">
+
+#TOC {
+  margin: 25px 0px 20px 0px;
+}
+@media (max-width: 768px) {
+#TOC {
+  position: relative;
+  width: 100%;
+}
+}
+
+@media print {
+.toc-content {
+  /* see https://github.com/w3c/csswg-drafts/issues/4434 */
+  float: right;
+}
+}
+
+.toc-content {
+  padding-left: 30px;
+  padding-right: 40px;
+}
+
+div.main-container {
+  max-width: 1200px;
+}
+
+div.tocify {
+  width: 20%;
+  max-width: 260px;
+  max-height: 85%;
+}
+
+@media (min-width: 768px) and (max-width: 991px) {
+  div.tocify {
+    width: 25%;
+  }
+}
+
+@media (max-width: 767px) {
+  div.tocify {
+    width: 100%;
+    max-width: none;
+  }
+}
+
+.tocify ul, .tocify li {
+  line-height: 20px;
+}
+
+.tocify-subheader .tocify-item {
+  font-size: 0.90em;
+}
+
+.tocify .list-group-item {
+  border-radius: 0px;
+}
+
+
+</style>
+
+
+
+</head>
+
+<body>
+
+
+<div class="container-fluid main-container">
+
+
+<!-- setup 3col/9col grid for toc_float and main content  -->
+<div class="row">
+<div class="col-sm-12 col-md-4 col-lg-3">
+<div id="TOC" class="tocify">
+</div>
+</div>
+
+<div class="toc-content col-sm-12 col-md-8 col-lg-9">
+
+
+
+
+<div class="navbar navbar-default  navbar-fixed-top" role="navigation">
+  <div class="container">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="index.html">Sort Horiiのメモ帳</a>
+    </div>
+    <div id="navbar" class="navbar-collapse collapse">
+      <ul class="nav navbar-nav">
+        <li>
+  <a href="index.html">
+    <span class="fas fa-home"></span>
+     
+    Home
+  </a>
+</li>
+<li class="dropdown">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+    Data Visualization
+     
+    <span class="caret"></span>
+  </a>
+  <ul class="dropdown-menu" role="menu">
+    <li class="dropdown-header">Data Visualization</li>
+    <li>
+      <a href="Barplot.html">Barplot</a>
+    </li>
+    <li>
+      <a href="Histogram.html">Histogram</a>
+    </li>
+    <li>
+      <a href="Boxplot.html">Boxplot</a>
+    </li>
+    <li>
+      <a href="Scatterplot.html">Scatterplot</a>
+    </li>
+    <li>
+      <a href="Lineplot.html">Lineplot</a>
+    </li>
+  </ul>
+</li>
+<li class="dropdown">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+    Regression
+     
+    <span class="caret"></span>
+  </a>
+  <ul class="dropdown-menu" role="menu">
+    <li class="dropdown-header">Regression</li>
+    <li>
+      <a href="Multiple_Linear_Regression.html">Multiple Linear Regression</a>
+    </li>
+    <li>
+      <a href="Multiple_Linear_Regression_interaction.html">Multiple Linear Regression interaction</a>
+    </li>
+    <li>
+      <a href="Logistic_Regression.html">Logistic Regression</a>
+    </li>
+    <li>
+      <a href="Logistic_Regression_interaction.html">Logistic Regression interaction</a>
+    </li>
+  </ul>
+</li>
+      </ul>
+      <ul class="nav navbar-nav navbar-right">
+        
+      </ul>
+    </div><!--/.nav-collapse -->
+  </div><!--/.container -->
+</div><!--/.navbar -->
+
+<div id="header">
+
+<div class="btn-group pull-right float-right">
+<button type="button" class="btn btn-default btn-xs btn-secondary btn-sm dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><span>Code</span> <span class="caret"></span></button>
+<ul class="dropdown-menu dropdown-menu-right" style="min-width: 50px;">
+<li><a id="rmd-show-all-code" href="#">Show All Code</a></li>
+<li><a id="rmd-hide-all-code" href="#">Hide All Code</a></li>
+<li role="separator" class="divider"></li>
+<li><a id="rmd-download-source" href="#">Download Rmd</a></li>
+</ul>
+</div>
+
+
+
+<h1 class="title toc-ignore">Lineplot</h1>
+<h4 class="date">2021-02-20 22:57:30</h4>
+
+</div>
+
+
+<div id="使用するパッケージ" class="section level1" number="1">
+<h1 number="1"><span class="header-section-number">1</span> 使用するパッケージ</h1>
+<pre class="r"><code>library(tidyverse)
+library(magrittr)</code></pre>
+</div>
+<div id="ggplot2-の-theme-をあらかじめ設定しておく" class="section level1" number="2">
+<h1 number="2"><span class="header-section-number">2</span> ggplot2 の theme をあらかじめ設定しておく</h1>
+<pre class="r"><code>theme_set(theme_minimal(base_size = 15))</code></pre>
+</div>
+<div id="使用するデータ" class="section level1" number="3">
+<h1 number="3"><span class="header-section-number">3</span> 使用するデータ</h1>
+<p>データは<a href="./data/House_of_Councilors_1996_2017.csv">こちら</a></p>
+<pre class="r"><code>data &lt;- read_csv(&quot;Data/House_of_Councilors_1996_2017.csv&quot;)</code></pre>
+</div>
+<div id="データ内の変数名を確認する" class="section level1" number="4">
+<h1 number="4"><span class="header-section-number">4</span> データ内の変数名を確認する</h1>
+<pre class="r"><code>names(data)</code></pre>
+<pre><code> [1] &quot;year&quot;       &quot;ku&quot;         &quot;kun&quot;        &quot;status&quot;     &quot;name&quot;      
+ [6] &quot;party&quot;      &quot;party_code&quot; &quot;previous&quot;   &quot;wl&quot;         &quot;voteshare&quot; 
+[11] &quot;age&quot;        &quot;nocand&quot;     &quot;rank&quot;       &quot;vote&quot;       &quot;eligible&quot;  
+[16] &quot;turnout&quot;    &quot;exp&quot;        &quot;expm&quot;       &quot;vs&quot;         &quot;exppv&quot;     
+[21] &quot;smd&quot;        &quot;party_jpn&quot; </code></pre>
+</div>
+<div id="折れ線グラフに使いやすい形にデータを整える" class="section level1" number="5">
+<h1 number="5"><span class="header-section-number">5</span> 折れ線グラフに使いやすい形にデータを整える</h1>
+<pre class="r"><code>data %&lt;&gt;% 
+  group_by(year, party_jpn) %&gt;% # 年ごと、各政党ごとに処理を行う
+  summarise(smd = sum(smd)) %&gt;%  # 各政党の当選者数を計算
+  filter(party_jpn %in% c(&quot;自民党&quot;, &quot;民主党&quot;, &quot;公明党&quot;, &quot;共産党&quot;)) %&gt;% # 政党を絞る
+  drop_na()</code></pre>
+</div>
+<div id="折れ線グラフ" class="section level1" number="6">
+<h1 number="6"><span class="header-section-number">6</span> 折れ線グラフ</h1>
+<div id="なんの変哲もない折れ線グラフ" class="section level2" number="6.1">
+<h2 number="6.1"><span class="header-section-number">6.1</span> なんの変哲もない折れ線グラフ</h2>
+<pre class="r"><code>data %&gt;% 
+  ggplot(aes(x = year, y = smd,
+             group = party_jpn,
+             color = party_jpn)) +
+  geom_point() +
+  geom_line() +
+  labs(x = &quot;&quot;, y = &quot;当選者数&quot;, 
+       title = &quot;参院選: 各政党の当選者数の推移&quot;,
+       color = &quot;政党&quot;)</code></pre>
+<p><img src="Lineplot_files/figure-html/unnamed-chunk-7-1.png" width="672" style="display: block; margin: auto;" /></p>
+</div>
+<div id="政党ごとにpointの形を変える" class="section level2" number="6.2">
+<h2 number="6.2"><span class="header-section-number">6.2</span> 政党ごとにpointの形を変える</h2>
+<p>線を色ごとに変えたほうが視認性が高いが、モノクロで資料を作らなければならない時もある。 その場合は、pointの形を変えると良い。また、線の形を変えても良いだろう。 個人的にはpointの形を変えたほうが視認性が高いと思う。 ちなみに、pointの形を変える場合は<code>size =</code>でpointを大きくしたほうが見やすい。</p>
+<p>ちなみに、折れ線グラフのlegendはbottomの方が良いという声もある。 legendをbottomにするときは<code>labs()</code>で<code>x = NULL</code>としたほうが見栄えが良い。</p>
+<pre class="r"><code>data %&gt;% 
+  ggplot(aes(x = year, y = smd, 
+             group = party_jpn)) +
+  geom_point(aes(shape = party_jpn),
+             size = 4) +
+  geom_line() +
+  labs(x = NULL, y = &quot;当選者数&quot;,
+       title = &quot;参院選: 各政党の当選者数の推移&quot;,
+       shape = NULL) +
+  theme(legend.title = element_blank(),
+        legend.position = &quot;bottom&quot;)</code></pre>
+<p><img src="Lineplot_files/figure-html/unnamed-chunk-8-1.png" width="672" style="display: block; margin: auto;" /></p>
+</div>
+<div id="政党ごとにlineの形を変える" class="section level2" number="6.3">
+<h2 number="6.3"><span class="header-section-number">6.3</span> 政党ごとにlineの形を変える</h2>
+<pre class="r"><code>data %&gt;% 
+  ggplot(aes(x = year, y = smd, 
+             group = party_jpn)) +
+  geom_point() +
+  geom_line(aes(linetype = party_jpn)) +
+  labs(x = NULL, y = &quot;当選者数&quot;,
+       title = &quot;参院選: 各政党の当選者数の推移&quot;,
+       linetype = NULL) +
+  theme(legend.position = &quot;bottom&quot;)</code></pre>
+<p><img src="Lineplot_files/figure-html/unnamed-chunk-9-1.png" width="672" style="display: block; margin: auto;" /></p>
+</div>
+<div id="legendの位置を自由に指定する場合" class="section level2" number="6.4">
+<h2 number="6.4"><span class="header-section-number">6.4</span> legendの位置を自由に指定する場合</h2>
+<p>legendをグラフの中に置いたほうが見やすいという人もいる。 その場合、<code>legend.position = c(x, y)</code>でlegendの位置を指定する。</p>
+<pre class="r"><code>data %&gt;% 
+  ggplot(aes(x = year, y = smd,
+             group = party_jpn,
+             color = party_jpn)) +
+  geom_point() +
+  geom_line() +
+  labs(x = &quot;&quot;, y = &quot;当選者数&quot;, 
+       title = &quot;参院選: 各政党の当選者数の推移&quot;,
+       color = &quot;政党&quot;) +
+  theme(legend.title = element_blank(), 
+        legend.position = c(0.1, 0.5))</code></pre>
+<p><img src="Lineplot_files/figure-html/unnamed-chunk-10-1.png" width="672" style="display: block; margin: auto;" /></p>
+</div>
+<div id="pointの付近に値を載せたい" class="section level2" number="6.5">
+<h2 number="6.5"><span class="header-section-number">6.5</span> pointの付近に値を載せたい</h2>
+<p>数値の動きが分かっても、実際の数値が分からない。そんな時は<code>ggrepel</code>だ。 <code>geom_text_repel()</code>を使えば、適当にいい感じにpointに被らずに数値を載せることができる。 また、数値の載せ方はランダムであるため、<code>set.seed()</code>で乱数を固定したほうが良いだろう。</p>
+<pre class="r"><code>library(ggrepel)
+
+set.seed(1)
+
+data %&gt;% 
+  ggplot(aes(x = year, y = smd,
+             group = party_jpn,
+             color = party_jpn)) +
+  geom_point() +
+  geom_line() +
+  labs(x = NULL, y = &quot;当選者数&quot;, 
+       title = &quot;参院選: 各政党の当選者数の推移&quot;,
+       color = &quot;政党&quot;) +
+  geom_text_repel(aes(label = smd), show.legend = F) +
+  theme(legend.title = element_blank(),
+        legend.position = &quot;bottom&quot;)</code></pre>
+<p><img src="Lineplot_files/figure-html/unnamed-chunk-11-1.png" width="672" style="display: block; margin: auto;" /></p>
+</div>
+<div id="x軸のメモリを調整したい" class="section level2" number="6.6">
+<h2 number="6.6"><span class="header-section-number">6.6</span> x軸のメモリを調整したい</h2>
+<p>気にしない人もいるだろうが、pointとメモリの間隔が気に入らない。 このままだとありもしない1995年のデータがあるように見えないだろうか？ それに衆院選は5年刻みではない。 そういうときは<code>as.factor()</code>で連続変数ではなく、因子型と指定すれば良いだろう。 また、<code>paste()</code>を使えば単位を付けることが可能だ。 もし、それで順番がぐちゃぐちゃになったら、因子型にする前に<code>arrange()</code>で順番を変えれば良いはず…(たぶん)</p>
+<pre class="r"><code>set.seed(1)
+
+data %&gt;% 
+  mutate(year = paste(as.factor(year), &quot;年&quot;, sep = &quot;&quot;)) %&gt;% 
+  ggplot(aes(x = year,
+             y = smd,
+             group = party_jpn,
+             color = party_jpn)) +
+  geom_point() +
+  geom_line() +
+  labs(x = NULL, y = &quot;当選者数&quot;, 
+       title = &quot;参院選: 各政党の当選者数の推移&quot;,
+       color = &quot;政党&quot;) +
+  geom_text_repel(aes(label = smd), show.legend = F) +
+  theme(legend.title = element_blank(),
+        legend.position = &quot;bottom&quot;) </code></pre>
+<p><img src="Lineplot_files/figure-html/unnamed-chunk-12-1.png" width="672" style="display: block; margin: auto;" /></p>
+</div>
+<div id="線のハイライト" class="section level2" number="6.7">
+<h2 number="6.7"><span class="header-section-number">6.7</span> 線のハイライト</h2>
+<p>今回は4つの政党だけを抽出し、可視化しているため見やすい。 しかし、より多くの折れ線を可視化する際には視認性が失われる。 そんな時は、より重要なものにのみ色を付けることで、視認性の高い折れ線グラフを作成できる。 <code>gghighlight</code>は<code>gghighlight(x %in% c("hoge", "hoge"))</code>で重要な個体を強調できる。</p>
+<pre class="r"><code>library(gghighlight)
+
+data %&gt;% 
+  mutate(year = paste(as.factor(year), &quot;年&quot;, sep = &quot;&quot;)) %&gt;% 
+  ggplot(aes(x = year,
+             y = smd,
+             group = party_jpn,
+             color = party_jpn)) +
+  geom_point() +
+  geom_line() +
+  gghighlight(party_jpn %in% c(&quot;自民党&quot;, &quot;民主党&quot;)) +
+  labs(x = NULL, y = &quot;当選者数&quot;, 
+       title = &quot;参院選: 各政党の当選者数の推移&quot;,
+       color = &quot;政党&quot;) +
+  theme(legend.title = element_blank(),
+        legend.position = &quot;bottom&quot;) </code></pre>
+<p><img src="Lineplot_files/figure-html/unnamed-chunk-13-1.png" width="672" style="display: block; margin: auto;" /></p>
+<HR>
+<p>この記事のコードをまとめたものは<a href="https://github.com/FruitGranola/R_Lineplot">Github</a>にあります。</p>
+<button>
+<a href="index.html">Homeに戻る</a>
+</button>
+</div>
+</div>
+
+<div id="rmd-source-code">LS0tDQp0aXRsZTogIkxpbmVwbG90Ig0KZGF0ZTogImByIFN5cy50aW1lKClgIg0KLS0tDQoNCmBgYHtyLCBpbmNsdWRlPUZBTFNFfQ0Ka25pdHI6Om9wdHNfY2h1bmskc2V0KHdhcm5pbmcgPSBGLA0KICAgICAgICAgICAgICAgICAgICAgIG1lc3NhZ2UgPSBGLA0KICAgICAgICAgICAgICAgICAgICAgIGNvbW1lbnQgPSAiIiwNCiAgICAgICAgICAgICAgICAgICAgICBmaWcuYWxpZ24gPSAiY2VudGVyIikNCmBgYA0KDQoNCiMg5L2/55So44GZ44KL44OR44OD44Kx44O844K4DQoNCmBgYHtyfQ0KbGlicmFyeSh0aWR5dmVyc2UpDQpsaWJyYXJ5KG1hZ3JpdHRyKQ0KYGBgDQoNCiMgZ2dwbG90MiDjga4gdGhlbWUg44KS44GC44KJ44GL44GY44KB6Kit5a6a44GX44Gm44GK44GPDQoNCmBgYHtyfQ0KdGhlbWVfc2V0KHRoZW1lX21pbmltYWwoYmFzZV9zaXplID0gMTUpKQ0KYGBgDQoNCiMg5L2/55So44GZ44KL44OH44O844K/DQoNCuODh+ODvOOCv+OBr1vjgZPjgaHjgoldKC4vZGF0YS9Ib3VzZV9vZl9Db3VuY2lsb3JzXzE5OTZfMjAxNy5jc3YpDQoNCmBgYHtyfQ0KZGF0YSA8LSByZWFkX2NzdigiRGF0YS9Ib3VzZV9vZl9Db3VuY2lsb3JzXzE5OTZfMjAxNy5jc3YiKQ0KYGBgDQoNCiMg44OH44O844K/5YaF44Gu5aSJ5pWw5ZCN44KS56K66KqN44GZ44KLDQoNCmBgYHtyfQ0KbmFtZXMoZGF0YSkNCmBgYA0KDQojIOaKmOOCjOe3muOCsOODqeODleOBq+S9v+OBhOOChOOBmeOBhOW9ouOBq+ODh+ODvOOCv+OCkuaVtOOBiOOCiw0KDQpgYGB7cn0NCmRhdGEgJTw+JSANCiAgZ3JvdXBfYnkoeWVhciwgcGFydHlfanBuKSAlPiUgIyDlubTjgZTjgajjgIHlkITmlL/lhZrjgZTjgajjgavlh6bnkIbjgpLooYzjgYYNCiAgc3VtbWFyaXNlKHNtZCA9IHN1bShzbWQpKSAlPiUgICMg5ZCE5pS/5YWa44Gu5b2T6YG46ICF5pWw44KS6KiI566XDQogIGZpbHRlcihwYXJ0eV9qcG4gJWluJSBjKCLoh6rmsJHlhZoiLCAi5rCR5Li75YWaIiwgIuWFrOaYjuWFmiIsICLlhbHnlKPlhZoiKSkgJT4lICMg5pS/5YWa44KS57We44KLDQogIGRyb3BfbmEoKQ0KYGBgDQoNCiMg5oqY44KM57ea44Kw44Op44OVDQoNCiMjIOOBquOCk+OBruWkieWTsuOCguOBquOBhOaKmOOCjOe3muOCsOODqeODlQ0KDQpgYGB7cn0NCmRhdGEgJT4lIA0KICBnZ3Bsb3QoYWVzKHggPSB5ZWFyLCB5ID0gc21kLA0KICAgICAgICAgICAgIGdyb3VwID0gcGFydHlfanBuLA0KICAgICAgICAgICAgIGNvbG9yID0gcGFydHlfanBuKSkgKw0KICBnZW9tX3BvaW50KCkgKw0KICBnZW9tX2xpbmUoKSArDQogIGxhYnMoeCA9ICIiLCB5ID0gIuW9k+mBuOiAheaVsCIsIA0KICAgICAgIHRpdGxlID0gIuWPgumZoumBuDog5ZCE5pS/5YWa44Gu5b2T6YG46ICF5pWw44Gu5o6o56e7IiwNCiAgICAgICBjb2xvciA9ICLmlL/lhZoiKQ0KYGBgDQoNCiMjIOaUv+WFmuOBlOOBqOOBq3BvaW5044Gu5b2i44KS5aSJ44GI44KLDQoNCue3muOCkuiJsuOBlOOBqOOBq+WkieOBiOOBn+OBu+OBhuOBjOimluiqjeaAp+OBjOmrmOOBhOOBjOOAgeODouODjuOCr+ODreOBp+izh+aWmeOCkuS9nOOCieOBquOBkeOCjOOBsOOBquOCieOBquOBhOaZguOCguOBguOCi+OAgg0K44Gd44Gu5aC05ZCI44Gv44CBcG9pbnTjga7lvaLjgpLlpInjgYjjgovjgajoia/jgYTjgILjgb7jgZ/jgIHnt5rjga7lvaLjgpLlpInjgYjjgabjgoLoia/jgYTjgaDjgo3jgYbjgIINCuWAi+S6uueahOOBq+OBr3BvaW5044Gu5b2i44KS5aSJ44GI44Gf44G744GG44GM6KaW6KqN5oCn44GM6auY44GE44Go5oCd44GG44CCDQrjgaHjgarjgb/jgavjgIFwb2ludOOBruW9ouOCkuWkieOBiOOCi+WgtOWQiOOBr2BzaXplID1g44GncG9pbnTjgpLlpKfjgY3jgY/jgZfjgZ/jgbvjgYbjgYzopovjgoTjgZnjgYTjgIINCg0K44Gh44Gq44G/44Gr44CB5oqY44KM57ea44Kw44Op44OV44GubGVnZW5k44GvYm90dG9t44Gu5pa544GM6Imv44GE44Go44GE44GG5aOw44KC44GC44KL44CCDQpsZWdlbmTjgpJib3R0b23jgavjgZnjgovjgajjgY3jga9gbGFicygpYOOBp2B4ID0gTlVMTGDjgajjgZfjgZ/jgbvjgYbjgYzopovmoITjgYjjgYzoia/jgYTjgIINCg0KYGBge3J9DQpkYXRhICU+JSANCiAgZ2dwbG90KGFlcyh4ID0geWVhciwgeSA9IHNtZCwgDQogICAgICAgICAgICAgZ3JvdXAgPSBwYXJ0eV9qcG4pKSArDQogIGdlb21fcG9pbnQoYWVzKHNoYXBlID0gcGFydHlfanBuKSwNCiAgICAgICAgICAgICBzaXplID0gNCkgKw0KICBnZW9tX2xpbmUoKSArDQogIGxhYnMoeCA9IE5VTEwsIHkgPSAi5b2T6YG46ICF5pWwIiwNCiAgICAgICB0aXRsZSA9ICLlj4LpmaLpgbg6IOWQhOaUv+WFmuOBruW9k+mBuOiAheaVsOOBruaOqOenuyIsDQogICAgICAgc2hhcGUgPSBOVUxMKSArDQogIHRoZW1lKGxlZ2VuZC50aXRsZSA9IGVsZW1lbnRfYmxhbmsoKSwNCiAgICAgICAgbGVnZW5kLnBvc2l0aW9uID0gImJvdHRvbSIpDQpgYGANCg0KIyMg5pS/5YWa44GU44Go44GrbGluZeOBruW9ouOCkuWkieOBiOOCiw0KDQpgYGB7cn0NCmRhdGEgJT4lIA0KICBnZ3Bsb3QoYWVzKHggPSB5ZWFyLCB5ID0gc21kLCANCiAgICAgICAgICAgICBncm91cCA9IHBhcnR5X2pwbikpICsNCiAgZ2VvbV9wb2ludCgpICsNCiAgZ2VvbV9saW5lKGFlcyhsaW5ldHlwZSA9IHBhcnR5X2pwbikpICsNCiAgbGFicyh4ID0gTlVMTCwgeSA9ICLlvZPpgbjogIXmlbAiLA0KICAgICAgIHRpdGxlID0gIuWPgumZoumBuDog5ZCE5pS/5YWa44Gu5b2T6YG46ICF5pWw44Gu5o6o56e7IiwNCiAgICAgICBsaW5ldHlwZSA9IE5VTEwpICsNCiAgdGhlbWUobGVnZW5kLnBvc2l0aW9uID0gImJvdHRvbSIpDQpgYGANCg0KIyMgbGVnZW5k44Gu5L2N572u44KS6Ieq55Sx44Gr5oyH5a6a44GZ44KL5aC05ZCIDQoNCmxlZ2VuZOOCkuOCsOODqeODleOBruS4reOBq+e9ruOBhOOBn+OBu+OBhuOBjOimi+OChOOBmeOBhOOBqOOBhOOBhuS6uuOCguOBhOOCi+OAgg0K44Gd44Gu5aC05ZCI44CBYGxlZ2VuZC5wb3NpdGlvbiA9IGMoeCwgeSlg44GnbGVnZW5k44Gu5L2N572u44KS5oyH5a6a44GZ44KL44CCDQoNCmBgYHtyfQ0KZGF0YSAlPiUgDQogIGdncGxvdChhZXMoeCA9IHllYXIsIHkgPSBzbWQsDQogICAgICAgICAgICAgZ3JvdXAgPSBwYXJ0eV9qcG4sDQogICAgICAgICAgICAgY29sb3IgPSBwYXJ0eV9qcG4pKSArDQogIGdlb21fcG9pbnQoKSArDQogIGdlb21fbGluZSgpICsNCiAgbGFicyh4ID0gIiIsIHkgPSAi5b2T6YG46ICF5pWwIiwgDQogICAgICAgdGl0bGUgPSAi5Y+C6Zmi6YG4OiDlkITmlL/lhZrjga7lvZPpgbjogIXmlbDjga7mjqjnp7siLA0KICAgICAgIGNvbG9yID0gIuaUv+WFmiIpICsNCiAgdGhlbWUobGVnZW5kLnRpdGxlID0gZWxlbWVudF9ibGFuaygpLCANCiAgICAgICAgbGVnZW5kLnBvc2l0aW9uID0gYygwLjEsIDAuNSkpDQpgYGANCg0KIyMgcG9pbnTjga7ku5jov5HjgavlgKTjgpLovInjgZvjgZ/jgYQNCg0K5pWw5YCk44Gu5YuV44GN44GM5YiG44GL44Gj44Gm44KC44CB5a6f6Zqb44Gu5pWw5YCk44GM5YiG44GL44KJ44Gq44GE44CC44Gd44KT44Gq5pmC44GvYGdncmVwZWxg44Gg44CCDQpgZ2VvbV90ZXh0X3JlcGVsKClg44KS5L2/44GI44Gw44CB6YGp5b2T44Gr44GE44GE5oSf44GY44GrcG9pbnTjgavooqvjgonjgZrjgavmlbDlgKTjgpLovInjgZvjgovjgZPjgajjgYzjgafjgY3jgovjgIINCuOBvuOBn+OAgeaVsOWApOOBrui8ieOBm+aWueOBr+ODqeODs+ODgOODoOOBp+OBguOCi+OBn+OCgeOAgWBzZXQuc2VlZCgpYOOBp+S5seaVsOOCkuWbuuWumuOBl+OBn+OBu+OBhuOBjOiJr+OBhOOBoOOCjeOBhuOAgg0KDQpgYGB7cn0NCmxpYnJhcnkoZ2dyZXBlbCkNCg0Kc2V0LnNlZWQoMSkNCg0KZGF0YSAlPiUgDQogIGdncGxvdChhZXMoeCA9IHllYXIsIHkgPSBzbWQsDQogICAgICAgICAgICAgZ3JvdXAgPSBwYXJ0eV9qcG4sDQogICAgICAgICAgICAgY29sb3IgPSBwYXJ0eV9qcG4pKSArDQogIGdlb21fcG9pbnQoKSArDQogIGdlb21fbGluZSgpICsNCiAgbGFicyh4ID0gTlVMTCwgeSA9ICLlvZPpgbjogIXmlbAiLCANCiAgICAgICB0aXRsZSA9ICLlj4LpmaLpgbg6IOWQhOaUv+WFmuOBruW9k+mBuOiAheaVsOOBruaOqOenuyIsDQogICAgICAgY29sb3IgPSAi5pS/5YWaIikgKw0KICBnZW9tX3RleHRfcmVwZWwoYWVzKGxhYmVsID0gc21kKSwgc2hvdy5sZWdlbmQgPSBGKSArDQogIHRoZW1lKGxlZ2VuZC50aXRsZSA9IGVsZW1lbnRfYmxhbmsoKSwNCiAgICAgICAgbGVnZW5kLnBvc2l0aW9uID0gImJvdHRvbSIpDQpgYGANCg0KIyMgeOi7uOOBruODoeODouODquOCkuiqv+aVtOOBl+OBn+OBhA0KDQrmsJfjgavjgZfjgarjgYTkurrjgoLjgYTjgovjgaDjgo3jgYbjgYzjgIFwb2ludOOBqOODoeODouODquOBrumWk+malOOBjOawl+OBq+WFpeOCieOBquOBhOOAgg0K44GT44Gu44G+44G+44Gg44Go44GC44KK44KC44GX44Gq44GEMTk5NeW5tOOBruODh+ODvOOCv+OBjOOBguOCi+OCiOOBhuOBq+imi+OBiOOBquOBhOOBoOOCjeOBhuOBi++8nw0K44Gd44KM44Gr6KGG6Zmi6YG444GvNeW5tOWIu+OBv+OBp+OBr+OBquOBhOOAgg0K44Gd44GG44GE44GG44Go44GN44GvYGFzLmZhY3RvcigpYOOBp+mAo+e2muWkieaVsOOBp+OBr+OBquOBj+OAgeWboOWtkOWei+OBqOaMh+WumuOBmeOCjOOBsOiJr+OBhOOBoOOCjeOBhuOAgg0K44G+44Gf44CBYHBhc3RlKClg44KS5L2/44GI44Gw5Y2Y5L2N44KS5LuY44GR44KL44GT44Go44GM5Y+v6IO944Gg44CCDQrjgoLjgZfjgIHjgZ3jgozjgafpoIbnlarjgYzjgZDjgaHjgoPjgZDjgaHjgoPjgavjgarjgaPjgZ/jgonjgIHlm6DlrZDlnovjgavjgZnjgovliY3jgatgYXJyYW5nZSgpYOOBp+mghueVquOCkuWkieOBiOOCjOOBsOiJr+OBhOOBr+OBmi4uLijjgZ/jgbbjgpMpDQoNCmBgYHtyfQ0Kc2V0LnNlZWQoMSkNCg0KZGF0YSAlPiUgDQogIG11dGF0ZSh5ZWFyID0gcGFzdGUoYXMuZmFjdG9yKHllYXIpLCAi5bm0Iiwgc2VwID0gIiIpKSAlPiUgDQogIGdncGxvdChhZXMoeCA9IHllYXIsDQogICAgICAgICAgICAgeSA9IHNtZCwNCiAgICAgICAgICAgICBncm91cCA9IHBhcnR5X2pwbiwNCiAgICAgICAgICAgICBjb2xvciA9IHBhcnR5X2pwbikpICsNCiAgZ2VvbV9wb2ludCgpICsNCiAgZ2VvbV9saW5lKCkgKw0KICBsYWJzKHggPSBOVUxMLCB5ID0gIuW9k+mBuOiAheaVsCIsIA0KICAgICAgIHRpdGxlID0gIuWPgumZoumBuDog5ZCE5pS/5YWa44Gu5b2T6YG46ICF5pWw44Gu5o6o56e7IiwNCiAgICAgICBjb2xvciA9ICLmlL/lhZoiKSArDQogIGdlb21fdGV4dF9yZXBlbChhZXMobGFiZWwgPSBzbWQpLCBzaG93LmxlZ2VuZCA9IEYpICsNCiAgdGhlbWUobGVnZW5kLnRpdGxlID0gZWxlbWVudF9ibGFuaygpLA0KICAgICAgICBsZWdlbmQucG9zaXRpb24gPSAiYm90dG9tIikgDQpgYGANCg0KIyMg57ea44Gu44OP44Kk44Op44Kk44OIDQoNCuS7iuWbnuOBrzTjgaTjga7mlL/lhZrjgaDjgZHjgpLmir3lh7rjgZfjgIHlj6/oppbljJbjgZfjgabjgYTjgovjgZ/jgoHopovjgoTjgZnjgYTjgIINCuOBl+OBi+OBl+OAgeOCiOOCiuWkmuOBj+OBruaKmOOCjOe3muOCkuWPr+imluWMluOBmeOCi+mam+OBq+OBr+imluiqjeaAp+OBjOWkseOCj+OCjOOCi+OAgg0K44Gd44KT44Gq5pmC44Gv44CB44KI44KK6YeN6KaB44Gq44KC44Gu44Gr44Gu44G/6Imy44KS5LuY44GR44KL44GT44Go44Gn44CB6KaW6KqN5oCn44Gu6auY44GE5oqY44KM57ea44Kw44Op44OV44KS5L2c5oiQ44Gn44GN44KL44CCDQpgZ2doaWdobGlnaHRg44GvYGdnaGlnaGxpZ2h0KHggJWluJSBjKCJob2dlIiwgImhvZ2UiKSlg44Gn6YeN6KaB44Gq5YCL5L2T44KS5by36Kq/44Gn44GN44KL44CCDQoNCmBgYHtyfQ0KbGlicmFyeShnZ2hpZ2hsaWdodCkNCg0KZGF0YSAlPiUgDQogIG11dGF0ZSh5ZWFyID0gcGFzdGUoYXMuZmFjdG9yKHllYXIpLCAi5bm0Iiwgc2VwID0gIiIpKSAlPiUgDQogIGdncGxvdChhZXMoeCA9IHllYXIsDQogICAgICAgICAgICAgeSA9IHNtZCwNCiAgICAgICAgICAgICBncm91cCA9IHBhcnR5X2pwbiwNCiAgICAgICAgICAgICBjb2xvciA9IHBhcnR5X2pwbikpICsNCiAgZ2VvbV9wb2ludCgpICsNCiAgZ2VvbV9saW5lKCkgKw0KICBnZ2hpZ2hsaWdodChwYXJ0eV9qcG4gJWluJSBjKCLoh6rmsJHlhZoiLCAi5rCR5Li75YWaIikpICsNCiAgbGFicyh4ID0gTlVMTCwgeSA9ICLlvZPpgbjogIXmlbAiLCANCiAgICAgICB0aXRsZSA9ICLlj4LpmaLpgbg6IOWQhOaUv+WFmuOBruW9k+mBuOiAheaVsOOBruaOqOenuyIsDQogICAgICAgY29sb3IgPSAi5pS/5YWaIikgKw0KICB0aGVtZShsZWdlbmQudGl0bGUgPSBlbGVtZW50X2JsYW5rKCksDQogICAgICAgIGxlZ2VuZC5wb3NpdGlvbiA9ICJib3R0b20iKSANCmBgYA0KDQo8SFI+DQoNCuOBk+OBruiomOS6i+OBruOCs+ODvOODieOCkuOBvuOBqOOCgeOBn+OCguOBruOBr1tHaXRodWJdKGh0dHBzOi8vZ2l0aHViLmNvbS9GcnVpdEdyYW5vbGEvUl9MaW5lcGxvdCnjgavjgYLjgorjgb7jgZnjgIINCg0KPGJ1dHRvbj5bSG9tZeOBq+aIu+OCi10oaW5kZXguaHRtbCk8L2J1dHRvbj4NCg==</div>
+
+
+</div>
+</div>
+
+</div>
+
+<script>
+
+// add bootstrap table styles to pandoc tables
+function bootstrapStylePandocTables() {
+  $('tr.odd').parent('tbody').parent('table').addClass('table table-condensed');
+}
+$(document).ready(function () {
+  bootstrapStylePandocTables();
+});
+
+
+</script>
+
+<!-- tabsets -->
+
+<script>
+$(document).ready(function () {
+  window.buildTabsets("TOC");
+});
+
+$(document).ready(function () {
+  $('.tabset-dropdown > .nav-tabs > li').click(function () {
+    $(this).parent().toggleClass('nav-tabs-open');
+  });
+});
+</script>
+
+<!-- code folding -->
+<script>
+$(document).ready(function () {
+  window.initializeSourceEmbed("Lineplot.Rmd");
+  window.initializeCodeFolding("show" === "show");
+});
+</script>
+
+<script>
+$(document).ready(function ()  {
+
+    // move toc-ignore selectors from section div to header
+    $('div.section.toc-ignore')
+        .removeClass('toc-ignore')
+        .children('h1,h2,h3,h4,h5').addClass('toc-ignore');
+
+    // establish options
+    var options = {
+      selectors: "h1,h2,h3",
+      theme: "bootstrap3",
+      context: '.toc-content',
+      hashGenerator: function (text) {
+        return text.replace(/[.\\/?&!#<>]/g, '').replace(/\s/g, '_');
+      },
+      ignoreSelector: ".toc-ignore",
+      scrollTo: 0
+    };
+    options.showAndHide = true;
+    options.smoothScroll = true;
+
+    // tocify
+    var toc = $("#TOC").tocify(options).data("toc-tocify");
+});
+</script>
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>
