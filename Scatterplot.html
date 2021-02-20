@@ -1,0 +1,622 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+<meta charset="utf-8" />
+<meta name="generator" content="pandoc" />
+<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
+
+
+
+
+<title>Scatterplot</title>
+
+<script src="site_libs/header-attrs-2.7/header-attrs.js"></script>
+<script src="site_libs/jquery-1.11.3/jquery.min.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link href="site_libs/bootstrap-3.3.5/css/united.min.css" rel="stylesheet" />
+<script src="site_libs/bootstrap-3.3.5/js/bootstrap.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/respond.min.js"></script>
+<style>h1 {font-size: 34px;}
+       h1.title {font-size: 38px;}
+       h2 {font-size: 30px;}
+       h3 {font-size: 24px;}
+       h4 {font-size: 18px;}
+       h5 {font-size: 16px;}
+       h6 {font-size: 12px;}
+       code {color: inherit; background-color: rgba(0, 0, 0, 0.04);}
+       pre:not([class]) { background-color: white }</style>
+<script src="site_libs/jqueryui-1.11.4/jquery-ui.min.js"></script>
+<link href="site_libs/tocify-1.9.1/jquery.tocify.css" rel="stylesheet" />
+<script src="site_libs/tocify-1.9.1/jquery.tocify.js"></script>
+<script src="site_libs/navigation-1.1/tabsets.js"></script>
+<script src="site_libs/navigation-1.1/codefolding.js"></script>
+<script src="site_libs/navigation-1.1/sourceembed.js"></script>
+<link href="site_libs/highlightjs-9.12.0/default.css" rel="stylesheet" />
+<script src="site_libs/highlightjs-9.12.0/highlight.js"></script>
+<link href="site_libs/font-awesome-5.1.0/css/all.css" rel="stylesheet" />
+<link href="site_libs/font-awesome-5.1.0/css/v4-shims.css" rel="stylesheet" />
+
+<style type="text/css">
+  code{white-space: pre-wrap;}
+  span.smallcaps{font-variant: small-caps;}
+  span.underline{text-decoration: underline;}
+  div.column{display: inline-block; vertical-align: top; width: 50%;}
+  div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+  ul.task-list{list-style: none;}
+    </style>
+
+<style type="text/css">code{white-space: pre;}</style>
+<script type="text/javascript">
+if (window.hljs) {
+  hljs.configure({languages: []});
+  hljs.initHighlightingOnLoad();
+  if (document.readyState && document.readyState === "complete") {
+    window.setTimeout(function() { hljs.initHighlighting(); }, 0);
+  }
+}
+</script>
+
+
+
+<style type="text/css">
+#rmd-source-code {
+  display: none;
+}
+</style>
+
+
+
+
+
+<style type = "text/css">
+.main-container {
+  max-width: 940px;
+  margin-left: auto;
+  margin-right: auto;
+}
+img {
+  max-width:100%;
+}
+.tabbed-pane {
+  padding-top: 12px;
+}
+.html-widget {
+  margin-bottom: 20px;
+}
+button.code-folding-btn:focus {
+  outline: none;
+}
+summary {
+  display: list-item;
+}
+pre code {
+  padding: 0;
+}
+</style>
+
+
+<style type="text/css">
+.dropdown-submenu {
+  position: relative;
+}
+.dropdown-submenu>.dropdown-menu {
+  top: 0;
+  left: 100%;
+  margin-top: -6px;
+  margin-left: -1px;
+  border-radius: 0 6px 6px 6px;
+}
+.dropdown-submenu:hover>.dropdown-menu {
+  display: block;
+}
+.dropdown-submenu>a:after {
+  display: block;
+  content: " ";
+  float: right;
+  width: 0;
+  height: 0;
+  border-color: transparent;
+  border-style: solid;
+  border-width: 5px 0 5px 5px;
+  border-left-color: #cccccc;
+  margin-top: 5px;
+  margin-right: -10px;
+}
+.dropdown-submenu:hover>a:after {
+  border-left-color: #adb5bd;
+}
+.dropdown-submenu.pull-left {
+  float: none;
+}
+.dropdown-submenu.pull-left>.dropdown-menu {
+  left: -100%;
+  margin-left: 10px;
+  border-radius: 6px 0 6px 6px;
+}
+</style>
+
+<script type="text/javascript">
+// manage active state of menu based on current page
+$(document).ready(function () {
+  // active menu anchor
+  href = window.location.pathname
+  href = href.substr(href.lastIndexOf('/') + 1)
+  if (href === "")
+    href = "index.html";
+  var menuAnchor = $('a[href="' + href + '"]');
+
+  // mark it active
+  menuAnchor.tab('show');
+
+  // if it's got a parent navbar menu mark it active as well
+  menuAnchor.closest('li.dropdown').addClass('active');
+
+  // Navbar adjustments
+  var navHeight = $(".navbar").first().height() + 15;
+  var style = document.createElement('style');
+  var pt = "padding-top: " + navHeight + "px; ";
+  var mt = "margin-top: -" + navHeight + "px; ";
+  var css = "";
+  // offset scroll position for anchor links (for fixed navbar)
+  for (var i = 1; i <= 6; i++) {
+    css += ".section h" + i + "{ " + pt + mt + "}\n";
+  }
+  style.innerHTML = "body {" + pt + "padding-bottom: 40px; }\n" + css;
+  document.head.appendChild(style);
+});
+</script>
+
+<!-- tabsets -->
+
+<style type="text/css">
+.tabset-dropdown > .nav-tabs {
+  display: inline-table;
+  max-height: 500px;
+  min-height: 44px;
+  overflow-y: auto;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.tabset-dropdown > .nav-tabs > li.active:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li.active:before {
+  content: "&#xe258;";
+  border: none;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs > li.active {
+  display: block;
+}
+
+.tabset-dropdown > .nav-tabs > li > a,
+.tabset-dropdown > .nav-tabs > li > a:focus,
+.tabset-dropdown > .nav-tabs > li > a:hover {
+  border: none;
+  display: inline-block;
+  border-radius: 4px;
+  background-color: transparent;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li {
+  display: block;
+  float: none;
+}
+
+.tabset-dropdown > .nav-tabs > li {
+  display: none;
+}
+</style>
+
+<!-- code folding -->
+<style type="text/css">
+.code-folding-btn { margin-bottom: 4px; }
+</style>
+
+
+
+<style type="text/css">
+
+#TOC {
+  margin: 25px 0px 20px 0px;
+}
+@media (max-width: 768px) {
+#TOC {
+  position: relative;
+  width: 100%;
+}
+}
+
+@media print {
+.toc-content {
+  /* see https://github.com/w3c/csswg-drafts/issues/4434 */
+  float: right;
+}
+}
+
+.toc-content {
+  padding-left: 30px;
+  padding-right: 40px;
+}
+
+div.main-container {
+  max-width: 1200px;
+}
+
+div.tocify {
+  width: 20%;
+  max-width: 260px;
+  max-height: 85%;
+}
+
+@media (min-width: 768px) and (max-width: 991px) {
+  div.tocify {
+    width: 25%;
+  }
+}
+
+@media (max-width: 767px) {
+  div.tocify {
+    width: 100%;
+    max-width: none;
+  }
+}
+
+.tocify ul, .tocify li {
+  line-height: 20px;
+}
+
+.tocify-subheader .tocify-item {
+  font-size: 0.90em;
+}
+
+.tocify .list-group-item {
+  border-radius: 0px;
+}
+
+
+</style>
+
+
+
+</head>
+
+<body>
+
+
+<div class="container-fluid main-container">
+
+
+<!-- setup 3col/9col grid for toc_float and main content  -->
+<div class="row">
+<div class="col-sm-12 col-md-4 col-lg-3">
+<div id="TOC" class="tocify">
+</div>
+</div>
+
+<div class="toc-content col-sm-12 col-md-8 col-lg-9">
+
+
+
+
+<div class="navbar navbar-default  navbar-fixed-top" role="navigation">
+  <div class="container">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="index.html">Sort Horiiのメモ帳</a>
+    </div>
+    <div id="navbar" class="navbar-collapse collapse">
+      <ul class="nav navbar-nav">
+        <li>
+  <a href="index.html">
+    <span class="fas fa-home"></span>
+     
+    Home
+  </a>
+</li>
+<li class="dropdown">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+    Data Visualization
+     
+    <span class="caret"></span>
+  </a>
+  <ul class="dropdown-menu" role="menu">
+    <li class="dropdown-header">Data Visualization</li>
+    <li>
+      <a href="Barplot.html">Barplot</a>
+    </li>
+    <li>
+      <a href="Histogram.html">Histogram</a>
+    </li>
+    <li>
+      <a href="Boxplot.html">Boxplot</a>
+    </li>
+    <li>
+      <a href="Scatterplot.html">Scatterplot</a>
+    </li>
+    <li>
+      <a href="Lineplot.html">Lineplot</a>
+    </li>
+  </ul>
+</li>
+<li class="dropdown">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+    Regression
+     
+    <span class="caret"></span>
+  </a>
+  <ul class="dropdown-menu" role="menu">
+    <li class="dropdown-header">Regression</li>
+    <li>
+      <a href="Multiple_Linear_Regression.html">Multiple Linear Regression</a>
+    </li>
+    <li>
+      <a href="Multiple_Linear_Regression_interaction.html">Multiple Linear Regression interaction</a>
+    </li>
+    <li>
+      <a href="Logistic_Regression.html">Logistic Regression</a>
+    </li>
+    <li>
+      <a href="Logistic_Regression_interaction.html">Logistic Regression interaction</a>
+    </li>
+  </ul>
+</li>
+      </ul>
+      <ul class="nav navbar-nav navbar-right">
+        
+      </ul>
+    </div><!--/.nav-collapse -->
+  </div><!--/.container -->
+</div><!--/.navbar -->
+
+<div id="header">
+
+<div class="btn-group pull-right float-right">
+<button type="button" class="btn btn-default btn-xs btn-secondary btn-sm dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><span>Code</span> <span class="caret"></span></button>
+<ul class="dropdown-menu dropdown-menu-right" style="min-width: 50px;">
+<li><a id="rmd-show-all-code" href="#">Show All Code</a></li>
+<li><a id="rmd-hide-all-code" href="#">Hide All Code</a></li>
+<li role="separator" class="divider"></li>
+<li><a id="rmd-download-source" href="#">Download Rmd</a></li>
+</ul>
+</div>
+
+
+
+<h1 class="title toc-ignore">Scatterplot</h1>
+<h4 class="date">2021-02-20 22:58:03</h4>
+
+</div>
+
+
+<div id="使用するパッケージ" class="section level1" number="1">
+<h1 number="1"><span class="header-section-number">1</span> 使用するパッケージ</h1>
+<pre class="r"><code>library(tidyverse)
+library(magrittr)</code></pre>
+</div>
+<div id="ggplot2-の-theme-をあらかじめ設定しておく" class="section level1" number="2">
+<h1 number="2"><span class="header-section-number">2</span> ggplot2 の theme をあらかじめ設定しておく</h1>
+<pre class="r"><code>theme_set(theme_minimal(base_size = 15))</code></pre>
+</div>
+<div id="使用するデータ" class="section level1" number="3">
+<h1 number="3"><span class="header-section-number">3</span> 使用するデータ</h1>
+<p>データは<a href="./data/House_of_Councilors_1996_2017.csv">こちら</a></p>
+<pre class="r"><code>data &lt;- read_csv(&quot;Data/House_of_Councilors_1996_2017.csv&quot;)</code></pre>
+</div>
+<div id="データ内の変数名を確認する" class="section level1" number="4">
+<h1 number="4"><span class="header-section-number">4</span> データ内の変数名を確認する</h1>
+<pre class="r"><code>names(data)</code></pre>
+<pre><code> [1] &quot;year&quot;       &quot;ku&quot;         &quot;kun&quot;        &quot;status&quot;     &quot;name&quot;      
+ [6] &quot;party&quot;      &quot;party_code&quot; &quot;previous&quot;   &quot;wl&quot;         &quot;voteshare&quot; 
+[11] &quot;age&quot;        &quot;nocand&quot;     &quot;rank&quot;       &quot;vote&quot;       &quot;eligible&quot;  
+[16] &quot;turnout&quot;    &quot;exp&quot;        &quot;expm&quot;       &quot;vs&quot;         &quot;exppv&quot;     
+[21] &quot;smd&quot;        &quot;party_jpn&quot; </code></pre>
+</div>
+<div id="年にデータを絞る" class="section level1" number="5">
+<h1 number="5"><span class="header-section-number">5</span> 2005年にデータを絞る</h1>
+<pre class="r"><code>data_2005 &lt;- data %&gt;% 
+  filter(year == 2005) %&gt;%  # 2005年のデータに絞る
+  drop_na()</code></pre>
+</div>
+<div id="上位4政党に絞る" class="section level1" number="6">
+<h1 number="6"><span class="header-section-number">6</span> 上位4政党に絞る</h1>
+<p>今回は簡単のために上位4政党に絞る。</p>
+<pre class="r"><code>data_2005 %&gt;% 
+  ggplot(aes(x = party_jpn)) +
+  geom_bar() +
+  labs(x = &quot;&quot;)</code></pre>
+<p><img src="Scatterplot_files/figure-html/unnamed-chunk-7-1.png" width="672" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>data_2005 %&lt;&gt;% filter(party_jpn %in% c(&quot;自民党&quot;, &quot;民主党&quot;, &quot;社民党&quot;, &quot;共産党&quot;))</code></pre>
+</div>
+<div id="散布図" class="section level1" number="7">
+<h1 number="7"><span class="header-section-number">7</span> 散布図</h1>
+<div id="何の変哲もない散布図" class="section level2" number="7.1">
+<h2 number="7.1"><span class="header-section-number">7.1</span> 何の変哲もない散布図</h2>
+<p>恐らく正の相関がみられる。ただ、左下の存在が気になる。 （<a href="https://qiita.com/FruitGranola/items/d9acd187bf5e93e5c57e">この記事</a>を読んでいる人はこのクラスタがなにか知っていると思うが…）</p>
+<pre class="r"><code>data_2005 %&gt;% 
+  ggplot(aes(x = exppv, y = voteshare)) +
+  geom_point() +
+  labs(x = &quot;有権者一人当たりの選挙費用&quot;, y = &quot;得票率&quot;, title = &quot;選挙費用と得票率の散布図&quot;)</code></pre>
+<p><img src="Scatterplot_files/figure-html/unnamed-chunk-9-1.png" width="672" style="display: block; margin: auto;" /></p>
+</div>
+<div id="回帰直線を引きたい信頼区間あり" class="section level2" number="7.2">
+<h2 number="7.2"><span class="header-section-number">7.2</span> 回帰直線を引きたい(信頼区間あり)</h2>
+<p>とりま、どのような相関関係か知りたい場合は、回帰直線を引いてしまおう。</p>
+<pre class="r"><code>data_2005 %&gt;% 
+  ggplot(aes(x = exppv, y = voteshare)) +
+  geom_point() +
+  geom_smooth(method = &quot;lm&quot;) +
+  labs(x = &quot;有権者一人当たりの選挙費用&quot;, y = &quot;得票率&quot;, title = &quot;選挙費用と得票率の散布図&quot;)</code></pre>
+<p><img src="Scatterplot_files/figure-html/unnamed-chunk-10-1.png" width="672" style="display: block; margin: auto;" /></p>
+</div>
+<div id="回帰直線を引きたい信頼区間なし" class="section level2" number="7.3">
+<h2 number="7.3"><span class="header-section-number">7.3</span> 回帰直線を引きたい(信頼区間なし)</h2>
+<p>信頼区間を出力したくない場合は、<code>se = F</code>を指定しよう。</p>
+<pre class="r"><code>data_2005 %&gt;% 
+  ggplot(aes(x = exppv, y = voteshare)) +
+  geom_point() +
+  geom_smooth(method = &quot;lm&quot;, se = F) +
+  labs(x = &quot;有権者一人当たりの選挙費用&quot;, y = &quot;得票率&quot;, title = &quot;選挙費用と得票率の散布図&quot;)</code></pre>
+<p><img src="Scatterplot_files/figure-html/unnamed-chunk-11-1.png" width="672" style="display: block; margin: auto;" /></p>
+</div>
+<div id="多項式回帰の回帰直線を引く" class="section level2" number="7.4">
+<h2 number="7.4"><span class="header-section-number">7.4</span> 多項式回帰の回帰直線を引く</h2>
+<p>なんとなく見た感じだと、一次式の回帰直線よりも2次式の回帰直線のほうが当てはまりが良さそう。 そんな時は<code>geom_smooth()</code>に<code>formula =</code>を使って、回帰直線の式を指定しよう。 とりあえず、2次式と3次式の回帰直線を引いた。 恐らく、左下のクラスタでは正の相関で、真ん中のクラスタから軽い正の相関もしくは無相関となっていると考えられる。</p>
+<pre class="r"><code>data_2005 %&gt;% 
+  ggplot(aes(x = exppv, y = voteshare)) +
+  geom_point() +
+  geom_smooth(method = &quot;lm&quot;, formula = y ~ poly(x, 2)) + # 二次式
+  geom_smooth(method = &quot;lm&quot;, formula = y ~ poly(x, 3)) + # 三次式
+  labs(x = &quot;有権者一人当たりの選挙費用&quot;, y = &quot;得票率&quot;, title = &quot;選挙費用と得票率の散布図&quot;)</code></pre>
+<p><img src="Scatterplot_files/figure-html/unnamed-chunk-12-1.png" width="672" style="display: block; margin: auto;" /></p>
+</div>
+<div id="クラスタごとに層化する" class="section level2" number="7.5">
+<h2 number="7.5"><span class="header-section-number">7.5</span> クラスタごとに層化する</h2>
+<p>では実際に層化して散布図を作成する。 見事に予想通りとなった。左下のクラスタは正の相関を見せているが、真ん中のクラスタでは無相関と小さな正の相関が見られた。 このことから、回帰分析をする際は交差項を含める必要があると分かる。（大政党ダミーと言ったところか…）</p>
+<pre class="r"><code>data_2005 %&gt;% 
+  ggplot(aes(x = exppv, y = voteshare, color = party_jpn)) +
+  geom_point() +
+  geom_smooth(method = &quot;lm&quot;) +
+  labs(x = &quot;有権者一人当たりの選挙費用&quot;, y = &quot;得票率&quot;, 
+       title = &quot;選挙費用と得票率の散布図&quot;,　color = &quot;政党&quot;) # labs()で&quot;color = &quot;hoge&quot;&quot;を指定するとlegendのタイトルを変更できる</code></pre>
+<p><img src="Scatterplot_files/figure-html/unnamed-chunk-13-1.png" width="672" style="display: block; margin: auto;" /></p>
+</div>
+<div id="大政党ダミーを作成し層化した散布図を作成する" class="section level2" number="7.6">
+<h2 number="7.6"><span class="header-section-number">7.6</span> 大政党ダミーを作成し、層化した散布図を作成する</h2>
+<p>実際に政党規模でダミー変数を作成し、層化した散布図を作成した。 大政党よりも小政党のほうが傾きが大きいとわかった。</p>
+<pre class="r"><code>data_2005 %&gt;% 
+  mutate(&quot;dummy&quot; = if_else(party_jpn %in% c(&quot;自民党&quot;, &quot;民主党&quot;), &quot;大政党&quot;, &quot;小政党&quot;)) %&gt;% 
+  ggplot(aes(x = exppv, y = voteshare, color = dummy)) +
+  geom_point() +
+  geom_smooth(method = &quot;lm&quot;) +
+  labs(x = &quot;有権者一人当たりの選挙費用&quot;, y = &quot;得票率&quot;, 
+       title = &quot;選挙費用と得票率の散布図&quot;,　color = &quot;政党規模&quot;)</code></pre>
+<p><img src="Scatterplot_files/figure-html/unnamed-chunk-14-1.png" width="672" style="display: block; margin: auto;" /></p>
+</div>
+<div id="pointを工夫すると" class="section level2" number="7.7">
+<h2 number="7.7"><span class="header-section-number">7.7</span> pointを工夫すると…</h2>
+<p><code>alpha =</code>と<code>size =</code>に過去の当選回数を指定した。当選回数が多いとpointの色が濃くなり、大きな点となる。 また、<code>geom_point()</code>で点を出力すると点が見ずらい。そのため、<code>geom_jitter()</code>で点を散らして出力する。 これを見ると、新人が不利であることや当選する政治家はしっかりと金を使っていることが分かる。</p>
+<pre class="r"><code>set.seed(1) # geom_jitter()の散らばり方はランダムのため、散らばり方を固定する。
+
+data_2005 %&gt;% 
+  ggplot(aes(x = exppv, y = smd)) +
+  geom_smooth(method = &quot;lm&quot;, se = F) +
+  geom_jitter(aes(color = as.factor(smd), 
+                  alpha = previous,
+                  size = previous),
+              show.legend = F) +
+  labs(x = &quot;有権者一人当たりの選挙費用&quot;, y = &quot;当選したか否か&quot;, 
+       title = &quot;選挙費用と得票率の散布図&quot;)</code></pre>
+<p><img src="Scatterplot_files/figure-html/unnamed-chunk-15-1.png" width="672" style="display: block; margin: auto;" /></p>
+<HR>
+<p>この記事のコードをまとめたものは<a href="https://github.com/FruitGranola/R_Scatterplot">Github</a>にあります。</p>
+<button>
+<a href="index.html">Homeに戻る</a>
+</button>
+</div>
+</div>
+
+<div id="rmd-source-code">LS0tDQp0aXRsZTogIlNjYXR0ZXJwbG90Ig0KZGF0ZTogImByIFN5cy50aW1lKClgIg0KLS0tDQoNCmBgYHtyLCBpbmNsdWRlPUZBTFNFfQ0Ka25pdHI6Om9wdHNfY2h1bmskc2V0KHdhcm5pbmcgPSBGLA0KICAgICAgICAgICAgICAgICAgICAgIG1lc3NhZ2UgPSBGLA0KICAgICAgICAgICAgICAgICAgICAgIGNvbW1lbnQgPSAiIiwNCiAgICAgICAgICAgICAgICAgICAgICBmaWcuYWxpZ24gPSAiY2VudGVyIikNCmBgYA0KDQojIOS9v+eUqOOBmeOCi+ODkeODg+OCseODvOOCuA0KDQpgYGB7cn0NCmxpYnJhcnkodGlkeXZlcnNlKQ0KbGlicmFyeShtYWdyaXR0cikNCmBgYA0KDQojIGdncGxvdDIg44GuIHRoZW1lIOOCkuOBguOCieOBi+OBmOOCgeioreWumuOBl+OBpuOBiuOBjw0KDQpgYGB7cn0NCnRoZW1lX3NldCh0aGVtZV9taW5pbWFsKGJhc2Vfc2l6ZSA9IDE1KSkNCmBgYA0KDQojIOS9v+eUqOOBmeOCi+ODh+ODvOOCvw0KDQrjg4fjg7zjgr/jga9b44GT44Gh44KJXSguL2RhdGEvSG91c2Vfb2ZfQ291bmNpbG9yc18xOTk2XzIwMTcuY3N2KQ0KDQpgYGB7cn0NCmRhdGEgPC0gcmVhZF9jc3YoIkRhdGEvSG91c2Vfb2ZfQ291bmNpbG9yc18xOTk2XzIwMTcuY3N2IikNCmBgYA0KDQojIOODh+ODvOOCv+WGheOBruWkieaVsOWQjeOCkueiuuiqjeOBmeOCiw0KDQpgYGB7cn0NCm5hbWVzKGRhdGEpDQpgYGANCg0KIyAyMDA15bm044Gr44OH44O844K/44KS57We44KLDQoNCmBgYHtyfQ0KZGF0YV8yMDA1IDwtIGRhdGEgJT4lIA0KICBmaWx0ZXIoeWVhciA9PSAyMDA1KSAlPiUgICMgMjAwNeW5tOOBruODh+ODvOOCv+OBq+e1nuOCiw0KICBkcm9wX25hKCkNCmBgYA0KDQojIOS4iuS9jTTmlL/lhZrjgavntZ7jgosNCg0K5LuK5Zue44Gv57Ch5Y2Y44Gu44Gf44KB44Gr5LiK5L2NNOaUv+WFmuOBq+e1nuOCi+OAgg0KDQpgYGB7cn0NCmRhdGFfMjAwNSAlPiUgDQogIGdncGxvdChhZXMoeCA9IHBhcnR5X2pwbikpICsNCiAgZ2VvbV9iYXIoKSArDQogIGxhYnMoeCA9ICIiKQ0KYGBgDQoNCmBgYHtyfQ0KZGF0YV8yMDA1ICU8PiUgZmlsdGVyKHBhcnR5X2pwbiAlaW4lIGMoIuiHquawkeWFmiIsICLmsJHkuLvlhZoiLCAi56S+5rCR5YWaIiwgIuWFseeUo+WFmiIpKQ0KYGBgDQoNCiMg5pWj5biD5ZuzDQoNCiMjIOS9leOBruWkieWTsuOCguOBquOBhOaVo+W4g+Wbsw0KDQrmgZDjgonjgY/mraPjga7nm7jplqLjgYzjgb/jgonjgozjgovjgILjgZ/jgaDjgIHlt6bkuIvjga7lrZjlnKjjgYzmsJfjgavjgarjgovjgIINCu+8iFvjgZPjga7oqJjkuotdKGh0dHBzOi8vcWlpdGEuY29tL0ZydWl0R3Jhbm9sYS9pdGVtcy9kOWFjZDE4N2JmNWU5M2U1YzU3ZSnjgpLoqq3jgpPjgafjgYTjgovkurrjga/jgZPjga7jgq/jg6njgrnjgr/jgYzjgarjgavjgYvnn6XjgaPjgabjgYTjgovjgajmgJ3jgYbjgYwuLi7vvIkNCg0KYGBge3J9DQpkYXRhXzIwMDUgJT4lIA0KICBnZ3Bsb3QoYWVzKHggPSBleHBwdiwgeSA9IHZvdGVzaGFyZSkpICsNCiAgZ2VvbV9wb2ludCgpICsNCiAgbGFicyh4ID0gIuacieaoqeiAheS4gOS6uuW9k+OBn+OCiuOBrumBuOaMmeiyu+eUqCIsIHkgPSAi5b6X56Wo546HIiwgdGl0bGUgPSAi6YG45oyZ6LK755So44Go5b6X56Wo546H44Gu5pWj5biD5ZuzIikNCmBgYA0KDQojIyDlm57luLDnm7Tnt5rjgpLlvJXjgY3jgZ/jgYQo5L+h6aC85Yy66ZaT44GC44KKKQ0KDQrjgajjgorjgb7jgIHjganjga7jgojjgYbjgarnm7jplqLplqLkv4LjgYvnn6XjgorjgZ/jgYTloLTlkIjjga/jgIHlm57luLDnm7Tnt5rjgpLlvJXjgYTjgabjgZfjgb7jgYrjgYbjgIINCg0KYGBge3J9DQpkYXRhXzIwMDUgJT4lIA0KICBnZ3Bsb3QoYWVzKHggPSBleHBwdiwgeSA9IHZvdGVzaGFyZSkpICsNCiAgZ2VvbV9wb2ludCgpICsNCiAgZ2VvbV9zbW9vdGgobWV0aG9kID0gImxtIikgKw0KICBsYWJzKHggPSAi5pyJ5qip6ICF5LiA5Lq65b2T44Gf44KK44Gu6YG45oyZ6LK755SoIiwgeSA9ICLlvpfnpajnjociLCB0aXRsZSA9ICLpgbjmjJnosrvnlKjjgajlvpfnpajnjofjga7mlaPluIPlm7MiKQ0KYGBgDQoNCiMjIOWbnuW4sOebtOe3muOCkuW8leOBjeOBn+OBhCjkv6HpoLzljLrplpPjgarjgZcpDQoNCuS/oemgvOWMuumWk+OCkuWHuuWKm+OBl+OBn+OBj+OBquOBhOWgtOWQiOOBr+OAgWBzZSA9IEZg44KS5oyH5a6a44GX44KI44GG44CCDQoNCmBgYHtyfQ0KZGF0YV8yMDA1ICU+JSANCiAgZ2dwbG90KGFlcyh4ID0gZXhwcHYsIHkgPSB2b3Rlc2hhcmUpKSArDQogIGdlb21fcG9pbnQoKSArDQogIGdlb21fc21vb3RoKG1ldGhvZCA9ICJsbSIsIHNlID0gRikgKw0KICBsYWJzKHggPSAi5pyJ5qip6ICF5LiA5Lq65b2T44Gf44KK44Gu6YG45oyZ6LK755SoIiwgeSA9ICLlvpfnpajnjociLCB0aXRsZSA9ICLpgbjmjJnosrvnlKjjgajlvpfnpajnjofjga7mlaPluIPlm7MiKQ0KYGBgDQoNCiMjIOWkmumgheW8j+WbnuW4sOOBruWbnuW4sOebtOe3muOCkuW8leOBjw0KDQrjgarjgpPjgajjgarjgY/opovjgZ/mhJ/jgZjjgaDjgajjgIHkuIDmrKHlvI/jga7lm57luLDnm7Tnt5rjgojjgorjgoIy5qyh5byP44Gu5Zue5biw55u057ea44Gu44G744GG44GM5b2T44Gm44Gv44G+44KK44GM6Imv44GV44Gd44GG44CCDQrjgZ3jgpPjgarmmYLjga9gZ2VvbV9zbW9vdGgoKWDjgatgZm9ybXVsYSA9YOOCkuS9v+OBo+OBpuOAgeWbnuW4sOebtOe3muOBruW8j+OCkuaMh+WumuOBl+OCiOOBhuOAgg0K44Go44KK44GC44GI44Ga44CBMuasoeW8j+OBqDPmrKHlvI/jga7lm57luLDnm7Tnt5rjgpLlvJXjgYTjgZ/jgIINCuaBkOOCieOBj+OAgeW3puS4i+OBruOCr+ODqeOCueOCv+OBp+OBr+ato+OBruebuOmWouOBp+OAgeecn+OCk+S4reOBruOCr+ODqeOCueOCv+OBi+OCiei7veOBhOato+OBruebuOmWouOCguOBl+OBj+OBr+eEoeebuOmWouOBqOOBquOBo+OBpuOBhOOCi+OBqOiAg+OBiOOCieOCjOOCi+OAgg0KDQpgYGB7cn0NCmRhdGFfMjAwNSAlPiUgDQogIGdncGxvdChhZXMoeCA9IGV4cHB2LCB5ID0gdm90ZXNoYXJlKSkgKw0KICBnZW9tX3BvaW50KCkgKw0KICBnZW9tX3Ntb290aChtZXRob2QgPSAibG0iLCBmb3JtdWxhID0geSB+IHBvbHkoeCwgMikpICsgIyDkuozmrKHlvI8NCiAgZ2VvbV9zbW9vdGgobWV0aG9kID0gImxtIiwgZm9ybXVsYSA9IHkgfiBwb2x5KHgsIDMpKSArICMg5LiJ5qyh5byPDQogIGxhYnMoeCA9ICLmnInmqKnogIXkuIDkurrlvZPjgZ/jgorjga7pgbjmjJnosrvnlKgiLCB5ID0gIuW+l+elqOeOhyIsIHRpdGxlID0gIumBuOaMmeiyu+eUqOOBqOW+l+elqOeOh+OBruaVo+W4g+WbsyIpDQpgYGANCg0KIyMg44Kv44Op44K544K/44GU44Go44Gr5bGk5YyW44GZ44KLDQoNCuOBp+OBr+Wun+mam+OBq+WxpOWMluOBl+OBpuaVo+W4g+Wbs+OCkuS9nOaIkOOBmeOCi+OAgg0K6KaL5LqL44Gr5LqI5oOz6YCa44KK44Go44Gq44Gj44Gf44CC5bem5LiL44Gu44Kv44Op44K544K/44Gv5q2j44Gu55u46Zai44KS6KaL44Gb44Gm44GE44KL44GM44CB55yf44KT5Lit44Gu44Kv44Op44K544K/44Gn44Gv54Sh55u46Zai44Go5bCP44GV44Gq5q2j44Gu55u46Zai44GM6KaL44KJ44KM44Gf44CCDQrjgZPjga7jgZPjgajjgYvjgonjgIHlm57luLDliIbmnpDjgpLjgZnjgovpmpvjga/kuqTlt67poIXjgpLlkKvjgoHjgovlv4XopoHjgYzjgYLjgovjgajliIbjgYvjgovjgILvvIjlpKfmlL/lhZrjg4Djg5/jg7zjgajoqIDjgaPjgZ/jgajjgZPjgo3jgYsuLi7vvIkNCg0KYGBge3J9DQpkYXRhXzIwMDUgJT4lIA0KICBnZ3Bsb3QoYWVzKHggPSBleHBwdiwgeSA9IHZvdGVzaGFyZSwgY29sb3IgPSBwYXJ0eV9qcG4pKSArDQogIGdlb21fcG9pbnQoKSArDQogIGdlb21fc21vb3RoKG1ldGhvZCA9ICJsbSIpICsNCiAgbGFicyh4ID0gIuacieaoqeiAheS4gOS6uuW9k+OBn+OCiuOBrumBuOaMmeiyu+eUqCIsIHkgPSAi5b6X56Wo546HIiwgDQogICAgICAgdGl0bGUgPSAi6YG45oyZ6LK755So44Go5b6X56Wo546H44Gu5pWj5biD5ZuzIizjgIBjb2xvciA9ICLmlL/lhZoiKSAjIGxhYnMoKeOBpyJjb2xvciA9ICJob2dlIiLjgpLmjIflrprjgZnjgovjgahsZWdlbmTjga7jgr/jgqTjg4jjg6vjgpLlpInmm7TjgafjgY3jgosNCmBgYA0KDQojIyDlpKfmlL/lhZrjg4Djg5/jg7zjgpLkvZzmiJDjgZfjgIHlsaTljJbjgZfjgZ/mlaPluIPlm7PjgpLkvZzmiJDjgZnjgosNCg0K5a6f6Zqb44Gr5pS/5YWa6KaP5qih44Gn44OA44Of44O85aSJ5pWw44KS5L2c5oiQ44GX44CB5bGk5YyW44GX44Gf5pWj5biD5Zuz44KS5L2c5oiQ44GX44Gf44CCDQrlpKfmlL/lhZrjgojjgorjgoLlsI/mlL/lhZrjga7jgbvjgYbjgYzlgr7jgY3jgYzlpKfjgY3jgYTjgajjgo/jgYvjgaPjgZ/jgIINCg0KYGBge3J9DQpkYXRhXzIwMDUgJT4lIA0KICBtdXRhdGUoImR1bW15IiA9IGlmX2Vsc2UocGFydHlfanBuICVpbiUgYygi6Ieq5rCR5YWaIiwgIuawkeS4u+WFmiIpLCAi5aSn5pS/5YWaIiwgIuWwj+aUv+WFmiIpKSAlPiUgDQogIGdncGxvdChhZXMoeCA9IGV4cHB2LCB5ID0gdm90ZXNoYXJlLCBjb2xvciA9IGR1bW15KSkgKw0KICBnZW9tX3BvaW50KCkgKw0KICBnZW9tX3Ntb290aChtZXRob2QgPSAibG0iKSArDQogIGxhYnMoeCA9ICLmnInmqKnogIXkuIDkurrlvZPjgZ/jgorjga7pgbjmjJnosrvnlKgiLCB5ID0gIuW+l+elqOeOhyIsIA0KICAgICAgIHRpdGxlID0gIumBuOaMmeiyu+eUqOOBqOW+l+elqOeOh+OBruaVo+W4g+WbsyIs44CAY29sb3IgPSAi5pS/5YWa6KaP5qihIikNCmBgYA0KDQojIyBwb2ludOOCkuW3peWkq+OBmeOCi+OBqC4uLg0KDQpgYWxwaGEgPWDjgahgc2l6ZSA9YOOBq+mBjuWOu+OBruW9k+mBuOWbnuaVsOOCkuaMh+WumuOBl+OBn+OAguW9k+mBuOWbnuaVsOOBjOWkmuOBhOOBqHBvaW5044Gu6Imy44GM5r+D44GP44Gq44KK44CB5aSn44GN44Gq54K544Go44Gq44KL44CCDQrjgb7jgZ/jgIFgZ2VvbV9wb2ludCgpYOOBp+eCueOCkuWHuuWKm+OBmeOCi+OBqOeCueOBjOimi+OBmuOCieOBhOOAguOBneOBruOBn+OCgeOAgWBnZW9tX2ppdHRlcigpYOOBp+eCueOCkuaVo+OCieOBl+OBpuWHuuWKm+OBmeOCi+OAgg0K44GT44KM44KS6KaL44KL44Go44CB5paw5Lq644GM5LiN5Yip44Gn44GC44KL44GT44Go44KE5b2T6YG444GZ44KL5pS/5rK75a6244Gv44GX44Gj44GL44KK44Go6YeR44KS5L2/44Gj44Gm44GE44KL44GT44Go44GM5YiG44GL44KL44CCDQoNCmBgYHtyfQ0Kc2V0LnNlZWQoMSkgIyBnZW9tX2ppdHRlcigp44Gu5pWj44KJ44Gw44KK5pa544Gv44Op44Oz44OA44Og44Gu44Gf44KB44CB5pWj44KJ44Gw44KK5pa544KS5Zu65a6a44GZ44KL44CCDQoNCmRhdGFfMjAwNSAlPiUgDQogIGdncGxvdChhZXMoeCA9IGV4cHB2LCB5ID0gc21kKSkgKw0KICBnZW9tX3Ntb290aChtZXRob2QgPSAibG0iLCBzZSA9IEYpICsNCiAgZ2VvbV9qaXR0ZXIoYWVzKGNvbG9yID0gYXMuZmFjdG9yKHNtZCksIA0KICAgICAgICAgICAgICAgICAgYWxwaGEgPSBwcmV2aW91cywNCiAgICAgICAgICAgICAgICAgIHNpemUgPSBwcmV2aW91cyksDQogICAgICAgICAgICAgIHNob3cubGVnZW5kID0gRikgKw0KICBsYWJzKHggPSAi5pyJ5qip6ICF5LiA5Lq65b2T44Gf44KK44Gu6YG45oyZ6LK755SoIiwgeSA9ICLlvZPpgbjjgZfjgZ/jgYvlkKbjgYsiLCANCiAgICAgICB0aXRsZSA9ICLpgbjmjJnosrvnlKjjgajlvpfnpajnjofjga7mlaPluIPlm7MiKQ0KYGBgDQoNCjxIUj4NCg0K44GT44Gu6KiY5LqL44Gu44Kz44O844OJ44KS44G+44Go44KB44Gf44KC44Gu44GvW0dpdGh1Yl0oaHR0cHM6Ly9naXRodWIuY29tL0ZydWl0R3Jhbm9sYS9SX1NjYXR0ZXJwbG90KeOBq+OBguOCiuOBvuOBmeOAgg0KDQo8YnV0dG9uPltIb21l44Gr5oi744KLXShpbmRleC5odG1sKTwvYnV0dG9uPg0K</div>
+
+
+</div>
+</div>
+
+</div>
+
+<script>
+
+// add bootstrap table styles to pandoc tables
+function bootstrapStylePandocTables() {
+  $('tr.odd').parent('tbody').parent('table').addClass('table table-condensed');
+}
+$(document).ready(function () {
+  bootstrapStylePandocTables();
+});
+
+
+</script>
+
+<!-- tabsets -->
+
+<script>
+$(document).ready(function () {
+  window.buildTabsets("TOC");
+});
+
+$(document).ready(function () {
+  $('.tabset-dropdown > .nav-tabs > li').click(function () {
+    $(this).parent().toggleClass('nav-tabs-open');
+  });
+});
+</script>
+
+<!-- code folding -->
+<script>
+$(document).ready(function () {
+  window.initializeSourceEmbed("Scatterplot.Rmd");
+  window.initializeCodeFolding("show" === "show");
+});
+</script>
+
+<script>
+$(document).ready(function ()  {
+
+    // move toc-ignore selectors from section div to header
+    $('div.section.toc-ignore')
+        .removeClass('toc-ignore')
+        .children('h1,h2,h3,h4,h5').addClass('toc-ignore');
+
+    // establish options
+    var options = {
+      selectors: "h1,h2,h3",
+      theme: "bootstrap3",
+      context: '.toc-content',
+      hashGenerator: function (text) {
+        return text.replace(/[.\\/?&!#<>]/g, '').replace(/\s/g, '_');
+      },
+      ignoreSelector: ".toc-ignore",
+      scrollTo: 0
+    };
+    options.showAndHide = true;
+    options.smoothScroll = true;
+
+    // tocify
+    var toc = $("#TOC").tocify(options).data("toc-tocify");
+});
+</script>
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>
