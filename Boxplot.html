@@ -1,0 +1,595 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+<meta charset="utf-8" />
+<meta name="generator" content="pandoc" />
+<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
+
+
+
+
+<title>Boxplot</title>
+
+<script src="site_libs/header-attrs-2.7/header-attrs.js"></script>
+<script src="site_libs/jquery-1.11.3/jquery.min.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link href="site_libs/bootstrap-3.3.5/css/united.min.css" rel="stylesheet" />
+<script src="site_libs/bootstrap-3.3.5/js/bootstrap.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/respond.min.js"></script>
+<style>h1 {font-size: 34px;}
+       h1.title {font-size: 38px;}
+       h2 {font-size: 30px;}
+       h3 {font-size: 24px;}
+       h4 {font-size: 18px;}
+       h5 {font-size: 16px;}
+       h6 {font-size: 12px;}
+       code {color: inherit; background-color: rgba(0, 0, 0, 0.04);}
+       pre:not([class]) { background-color: white }</style>
+<script src="site_libs/jqueryui-1.11.4/jquery-ui.min.js"></script>
+<link href="site_libs/tocify-1.9.1/jquery.tocify.css" rel="stylesheet" />
+<script src="site_libs/tocify-1.9.1/jquery.tocify.js"></script>
+<script src="site_libs/navigation-1.1/tabsets.js"></script>
+<script src="site_libs/navigation-1.1/codefolding.js"></script>
+<script src="site_libs/navigation-1.1/sourceembed.js"></script>
+<link href="site_libs/highlightjs-9.12.0/default.css" rel="stylesheet" />
+<script src="site_libs/highlightjs-9.12.0/highlight.js"></script>
+<link href="site_libs/font-awesome-5.1.0/css/all.css" rel="stylesheet" />
+<link href="site_libs/font-awesome-5.1.0/css/v4-shims.css" rel="stylesheet" />
+
+<style type="text/css">
+  code{white-space: pre-wrap;}
+  span.smallcaps{font-variant: small-caps;}
+  span.underline{text-decoration: underline;}
+  div.column{display: inline-block; vertical-align: top; width: 50%;}
+  div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+  ul.task-list{list-style: none;}
+    </style>
+
+<style type="text/css">code{white-space: pre;}</style>
+<script type="text/javascript">
+if (window.hljs) {
+  hljs.configure({languages: []});
+  hljs.initHighlightingOnLoad();
+  if (document.readyState && document.readyState === "complete") {
+    window.setTimeout(function() { hljs.initHighlighting(); }, 0);
+  }
+}
+</script>
+
+
+
+<style type="text/css">
+#rmd-source-code {
+  display: none;
+}
+</style>
+
+
+
+
+
+<style type = "text/css">
+.main-container {
+  max-width: 940px;
+  margin-left: auto;
+  margin-right: auto;
+}
+img {
+  max-width:100%;
+}
+.tabbed-pane {
+  padding-top: 12px;
+}
+.html-widget {
+  margin-bottom: 20px;
+}
+button.code-folding-btn:focus {
+  outline: none;
+}
+summary {
+  display: list-item;
+}
+pre code {
+  padding: 0;
+}
+</style>
+
+
+<style type="text/css">
+.dropdown-submenu {
+  position: relative;
+}
+.dropdown-submenu>.dropdown-menu {
+  top: 0;
+  left: 100%;
+  margin-top: -6px;
+  margin-left: -1px;
+  border-radius: 0 6px 6px 6px;
+}
+.dropdown-submenu:hover>.dropdown-menu {
+  display: block;
+}
+.dropdown-submenu>a:after {
+  display: block;
+  content: " ";
+  float: right;
+  width: 0;
+  height: 0;
+  border-color: transparent;
+  border-style: solid;
+  border-width: 5px 0 5px 5px;
+  border-left-color: #cccccc;
+  margin-top: 5px;
+  margin-right: -10px;
+}
+.dropdown-submenu:hover>a:after {
+  border-left-color: #adb5bd;
+}
+.dropdown-submenu.pull-left {
+  float: none;
+}
+.dropdown-submenu.pull-left>.dropdown-menu {
+  left: -100%;
+  margin-left: 10px;
+  border-radius: 6px 0 6px 6px;
+}
+</style>
+
+<script type="text/javascript">
+// manage active state of menu based on current page
+$(document).ready(function () {
+  // active menu anchor
+  href = window.location.pathname
+  href = href.substr(href.lastIndexOf('/') + 1)
+  if (href === "")
+    href = "index.html";
+  var menuAnchor = $('a[href="' + href + '"]');
+
+  // mark it active
+  menuAnchor.tab('show');
+
+  // if it's got a parent navbar menu mark it active as well
+  menuAnchor.closest('li.dropdown').addClass('active');
+
+  // Navbar adjustments
+  var navHeight = $(".navbar").first().height() + 15;
+  var style = document.createElement('style');
+  var pt = "padding-top: " + navHeight + "px; ";
+  var mt = "margin-top: -" + navHeight + "px; ";
+  var css = "";
+  // offset scroll position for anchor links (for fixed navbar)
+  for (var i = 1; i <= 6; i++) {
+    css += ".section h" + i + "{ " + pt + mt + "}\n";
+  }
+  style.innerHTML = "body {" + pt + "padding-bottom: 40px; }\n" + css;
+  document.head.appendChild(style);
+});
+</script>
+
+<!-- tabsets -->
+
+<style type="text/css">
+.tabset-dropdown > .nav-tabs {
+  display: inline-table;
+  max-height: 500px;
+  min-height: 44px;
+  overflow-y: auto;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.tabset-dropdown > .nav-tabs > li.active:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li.active:before {
+  content: "&#xe258;";
+  border: none;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs > li.active {
+  display: block;
+}
+
+.tabset-dropdown > .nav-tabs > li > a,
+.tabset-dropdown > .nav-tabs > li > a:focus,
+.tabset-dropdown > .nav-tabs > li > a:hover {
+  border: none;
+  display: inline-block;
+  border-radius: 4px;
+  background-color: transparent;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li {
+  display: block;
+  float: none;
+}
+
+.tabset-dropdown > .nav-tabs > li {
+  display: none;
+}
+</style>
+
+<!-- code folding -->
+<style type="text/css">
+.code-folding-btn { margin-bottom: 4px; }
+</style>
+
+
+
+<style type="text/css">
+
+#TOC {
+  margin: 25px 0px 20px 0px;
+}
+@media (max-width: 768px) {
+#TOC {
+  position: relative;
+  width: 100%;
+}
+}
+
+@media print {
+.toc-content {
+  /* see https://github.com/w3c/csswg-drafts/issues/4434 */
+  float: right;
+}
+}
+
+.toc-content {
+  padding-left: 30px;
+  padding-right: 40px;
+}
+
+div.main-container {
+  max-width: 1200px;
+}
+
+div.tocify {
+  width: 20%;
+  max-width: 260px;
+  max-height: 85%;
+}
+
+@media (min-width: 768px) and (max-width: 991px) {
+  div.tocify {
+    width: 25%;
+  }
+}
+
+@media (max-width: 767px) {
+  div.tocify {
+    width: 100%;
+    max-width: none;
+  }
+}
+
+.tocify ul, .tocify li {
+  line-height: 20px;
+}
+
+.tocify-subheader .tocify-item {
+  font-size: 0.90em;
+}
+
+.tocify .list-group-item {
+  border-radius: 0px;
+}
+
+
+</style>
+
+
+
+</head>
+
+<body>
+
+
+<div class="container-fluid main-container">
+
+
+<!-- setup 3col/9col grid for toc_float and main content  -->
+<div class="row">
+<div class="col-sm-12 col-md-4 col-lg-3">
+<div id="TOC" class="tocify">
+</div>
+</div>
+
+<div class="toc-content col-sm-12 col-md-8 col-lg-9">
+
+
+
+
+<div class="navbar navbar-default  navbar-fixed-top" role="navigation">
+  <div class="container">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="index.html">Sort Horiiのメモ帳</a>
+    </div>
+    <div id="navbar" class="navbar-collapse collapse">
+      <ul class="nav navbar-nav">
+        <li>
+  <a href="index.html">
+    <span class="fas fa-home"></span>
+     
+    Home
+  </a>
+</li>
+<li class="dropdown">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+    Data Visualization
+     
+    <span class="caret"></span>
+  </a>
+  <ul class="dropdown-menu" role="menu">
+    <li class="dropdown-header">Data Visualization</li>
+    <li>
+      <a href="Barplot.html">Barplot</a>
+    </li>
+    <li>
+      <a href="Histogram.html">Histogram</a>
+    </li>
+    <li>
+      <a href="Boxplot.html">Boxplot</a>
+    </li>
+    <li>
+      <a href="Scatterplot.html">Scatterplot</a>
+    </li>
+    <li>
+      <a href="Lineplot.html">Lineplot</a>
+    </li>
+  </ul>
+</li>
+<li class="dropdown">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+    Regression
+     
+    <span class="caret"></span>
+  </a>
+  <ul class="dropdown-menu" role="menu">
+    <li class="dropdown-header">Regression</li>
+    <li>
+      <a href="Multiple_Linear_Regression.html">Multiple Linear Regression</a>
+    </li>
+    <li>
+      <a href="Multiple_Linear_Regression_interaction.html">Multiple Linear Regression interaction</a>
+    </li>
+    <li>
+      <a href="Logistic_Regression.html">Logistic Regression</a>
+    </li>
+    <li>
+      <a href="Logistic_Regression_interaction.html">Logistic Regression interaction</a>
+    </li>
+  </ul>
+</li>
+      </ul>
+      <ul class="nav navbar-nav navbar-right">
+        
+      </ul>
+    </div><!--/.nav-collapse -->
+  </div><!--/.container -->
+</div><!--/.navbar -->
+
+<div id="header">
+
+<div class="btn-group pull-right float-right">
+<button type="button" class="btn btn-default btn-xs btn-secondary btn-sm dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><span>Code</span> <span class="caret"></span></button>
+<ul class="dropdown-menu dropdown-menu-right" style="min-width: 50px;">
+<li><a id="rmd-show-all-code" href="#">Show All Code</a></li>
+<li><a id="rmd-hide-all-code" href="#">Hide All Code</a></li>
+<li role="separator" class="divider"></li>
+<li><a id="rmd-download-source" href="#">Download Rmd</a></li>
+</ul>
+</div>
+
+
+
+<h1 class="title toc-ignore">Boxplot</h1>
+<h4 class="date">2021-02-20 22:57:21</h4>
+
+</div>
+
+
+<div id="使用するパッケージ" class="section level1" number="1">
+<h1 number="1"><span class="header-section-number">1</span> 使用するパッケージ</h1>
+<pre class="r"><code>library(tidyverse)
+library(magrittr)</code></pre>
+</div>
+<div id="ggplot2-の-theme-をあらかじめ設定しておく" class="section level1" number="2">
+<h1 number="2"><span class="header-section-number">2</span> ggplot2 の theme をあらかじめ設定しておく</h1>
+<pre class="r"><code>theme_set(theme_minimal(base_size = 15))</code></pre>
+</div>
+<div id="使用するデータ" class="section level1" number="3">
+<h1 number="3"><span class="header-section-number">3</span> 使用するデータ</h1>
+<p>データは<a href="./data/House_of_Councilors_1996_2017.csv">こちら</a></p>
+<pre class="r"><code>data &lt;- read_csv(&quot;Data/House_of_Councilors_1996_2017.csv&quot;)</code></pre>
+</div>
+<div id="データ内の変数名を確認する" class="section level1" number="4">
+<h1 number="4"><span class="header-section-number">4</span> データ内の変数名を確認する</h1>
+<pre class="r"><code>names(data)</code></pre>
+<pre><code> [1] &quot;year&quot;       &quot;ku&quot;         &quot;kun&quot;        &quot;status&quot;     &quot;name&quot;      
+ [6] &quot;party&quot;      &quot;party_code&quot; &quot;previous&quot;   &quot;wl&quot;         &quot;voteshare&quot; 
+[11] &quot;age&quot;        &quot;nocand&quot;     &quot;rank&quot;       &quot;vote&quot;       &quot;eligible&quot;  
+[16] &quot;turnout&quot;    &quot;exp&quot;        &quot;expm&quot;       &quot;vs&quot;         &quot;exppv&quot;     
+[21] &quot;smd&quot;        &quot;party_jpn&quot; </code></pre>
+</div>
+<div id="年にデータを絞る" class="section level1" number="5">
+<h1 number="5"><span class="header-section-number">5</span> 2015年にデータを絞る</h1>
+<pre class="r"><code>data_2005 &lt;- data %&gt;% filter(year == 2005) %&gt;% drop_na() # 2005年のデータに絞る</code></pre>
+</div>
+<div id="上位4政党に絞る" class="section level1" number="6">
+<h1 number="6"><span class="header-section-number">6</span> 上位4政党に絞る</h1>
+<p>今回は簡単のために上位4政党に絞る。</p>
+<pre class="r"><code>data_2005 %&gt;% 
+  ggplot(aes(x = party_jpn)) +
+  geom_bar() +
+  labs(x = &quot;&quot;)</code></pre>
+<p><img src="Boxplot_files/figure-html/unnamed-chunk-7-1.png" width="672" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>data_2005 %&lt;&gt;% filter(party_jpn %in% c(&quot;自民党&quot;, &quot;民主党&quot;, &quot;社民党&quot;, &quot;共産党&quot;))</code></pre>
+</div>
+<div id="箱ひげ図" class="section level1" number="7">
+<h1 number="7"><span class="header-section-number">7</span> 箱ひげ図</h1>
+<div id="何の変哲もない箱ひげ図" class="section level2" number="7.1">
+<h2 number="7.1"><span class="header-section-number">7.1</span> 何の変哲もない箱ひげ図</h2>
+<p>pointは外れ値を表す。</p>
+<pre class="r"><code>data_2005 %&gt;% 
+  ggplot(aes(x = party_jpn, y = voteshare)) +
+  geom_boxplot() +
+  labs(x = &quot;&quot;, y = &quot;得票率&quot;, title = &quot;2005年衆院選: 候補者の得票率&quot;) </code></pre>
+<p><img src="Boxplot_files/figure-html/unnamed-chunk-9-1.png" width="672" style="display: block; margin: auto;" /></p>
+</div>
+<div id="x軸の順番を入れ替える" class="section level2" number="7.2">
+<h2 number="7.2"><span class="header-section-number">7.2</span> x軸の順番を入れ替える</h2>
+<p>箱ひげ図で複数のクラスタを比較する際は、medianが小さい順に並べたほうが見やすい。 ただ、棒グラフと違って、<code>fct_reoder()</code>は順序的な意味合いを持たないfactor型には使えないため、 <code>transform(x = factor(x ,levels = c("hoge1", "hoge2", "hoge3")))</code>で並び替えを行う。</p>
+<pre class="r"><code>data_2005 %&gt;% 
+  transform(party_jpn = factor(party_jpn ,levels = c(&quot;共産党&quot;, &quot;社民党&quot;, &quot;民主党&quot;, &quot;自民党&quot;))) %&gt;%
+  ggplot(aes(x = party_jpn, y = voteshare)) +
+  geom_boxplot() +
+  labs(x = &quot;&quot;, y = &quot;得票率&quot;, title = &quot;2005年衆院選: 候補者の得票率&quot;) </code></pre>
+<p><img src="Boxplot_files/figure-html/unnamed-chunk-10-1.png" width="672" style="display: block; margin: auto;" /></p>
+</div>
+<div id="クラスタごとに色を付ける" class="section level2" number="7.3">
+<h2 number="7.3"><span class="header-section-number">7.3</span> クラスタごとに色を付ける</h2>
+<p>クラスタごとに色を付けると、より視認性が向上する（と思う…）。 <code>scale_fill_manual(values = c("color1", "color2", "color3", "color4"))</code>で、4色指定すれば自由に色を付けられる。 <a href="https://github.com/FruitGranola/R_Boxplot">Github</a>のレポジトリの中にカラーリストを入れたので、興味のある人は遊んでみて。</p>
+<pre class="r"><code>data_2005 %&gt;% 
+  transform(party_jpn = factor(party_jpn ,levels = c(&quot;共産党&quot;, &quot;社民党&quot;, &quot;民主党&quot;, &quot;自民党&quot;))) %&gt;%
+  ggplot(aes(x = party_jpn, y = voteshare)) +
+  geom_boxplot(aes(fill = party_jpn), show.legend = F) +
+  labs(x = &quot;&quot;, y = &quot;得票率&quot;, title = &quot;2005年衆院選: 候補者の得票率&quot;) </code></pre>
+<p><img src="Boxplot_files/figure-html/unnamed-chunk-11-1.png" width="672" style="display: block; margin: auto;" /></p>
+</div>
+<div id="平均値を付け加える" class="section level2" number="7.4">
+<h2 number="7.4"><span class="header-section-number">7.4</span> 平均値を付け加える</h2>
+<p>たまにt検定とかすると、「平均値も一緒に見たいなぁ」と思うこともある。そのときは以下のようにすれば、平均値も確認できる。</p>
+<p>社民党の平均値とmedianに開きがあるようだ。もしかしたらヒストグラムに歪みがあるかも。</p>
+<pre class="r"><code>data_2005 %&gt;% 
+  transform(party_jpn = factor(party_jpn ,levels = c(&quot;共産党&quot;, &quot;社民党&quot;, &quot;民主党&quot;, &quot;自民党&quot;))) %&gt;%
+  ggplot(aes(x = party_jpn, y = voteshare)) +
+  geom_boxplot(aes(fill = party_jpn), show.legend = F) +
+  labs(x = &quot;&quot;, y = &quot;得票率&quot;, title = &quot;2005年衆院選: 候補者の得票率&quot;) +
+  stat_summary(fun = mean, geom = &quot;point&quot;, color = &quot;#FC4E07&quot;) </code></pre>
+<p><img src="Boxplot_files/figure-html/unnamed-chunk-12-1.png" width="672" style="display: block; margin: auto;" /></p>
+</div>
+<div id="バイオリンプロット" class="section level2" number="7.5">
+<h2 number="7.5"><span class="header-section-number">7.5</span> バイオリンプロット</h2>
+<p>バイオリンプロットを一緒に描くことで、データの分布を確認しながら要約統計量を見ることができる。 社民党の得票率は右方向に裾野が広い分布ため、平均値とmedianが離れていたようだ。 共産党はあまりデータにばらつきが無いように見える。</p>
+<pre class="r"><code>data_2005 %&gt;% 
+  transform(party_jpn = factor(party_jpn ,levels = c(&quot;共産党&quot;, &quot;社民党&quot;, &quot;民主党&quot;, &quot;自民党&quot;))) %&gt;%
+  ggplot(aes(x = party_jpn, y = voteshare)) +
+  geom_violin(aes(fill = party_jpn), alpha = 0.3, show.legend = F) +
+  geom_boxplot(alpha = .5, show.legend = F) +
+  labs(x = &quot;&quot;, y = &quot;得票率&quot;, title = &quot;2005年衆院選: 候補者の得票率&quot;) +
+  stat_summary(fun = mean, geom = &quot;point&quot;, color = &quot;#FC4E07&quot;) +
+  coord_flip()</code></pre>
+<p><img src="Boxplot_files/figure-html/unnamed-chunk-13-1.png" width="672" style="display: block; margin: auto;" /></p>
+<HR>
+<p>この記事のコードをまとめたものは<a href="https://github.com/FruitGranola/R_Boxplot">Github</a>にあります。</p>
+<button>
+<a href="index.html">Homeに戻る</a>
+</button>
+</div>
+</div>
+
+<div id="rmd-source-code">LS0tDQp0aXRsZTogIkJveHBsb3QiDQpkYXRlOiAiYHIgU3lzLnRpbWUoKWAiDQotLS0NCg0KYGBge3IsIGluY2x1ZGU9RkFMU0V9DQprbml0cjo6b3B0c19jaHVuayRzZXQod2FybmluZyA9IEYsDQogICAgICAgICAgICAgICAgICAgICAgbWVzc2FnZSA9IEYsDQogICAgICAgICAgICAgICAgICAgICAgY29tbWVudCA9ICIiLA0KICAgICAgICAgICAgICAgICAgICAgIGZpZy5hbGlnbiA9ICJjZW50ZXIiKQ0KYGBgDQoNCiMg5L2/55So44GZ44KL44OR44OD44Kx44O844K4DQoNCmBgYHtyfQ0KbGlicmFyeSh0aWR5dmVyc2UpDQpsaWJyYXJ5KG1hZ3JpdHRyKQ0KYGBgDQoNCiMgZ2dwbG90MiDjga4gdGhlbWUg44KS44GC44KJ44GL44GY44KB6Kit5a6a44GX44Gm44GK44GPDQoNCmBgYHtyfQ0KdGhlbWVfc2V0KHRoZW1lX21pbmltYWwoYmFzZV9zaXplID0gMTUpKQ0KYGBgDQoNCiMg5L2/55So44GZ44KL44OH44O844K/DQoNCuODh+ODvOOCv+OBr1vjgZPjgaHjgoldKC4vZGF0YS9Ib3VzZV9vZl9Db3VuY2lsb3JzXzE5OTZfMjAxNy5jc3YpDQoNCmBgYHtyfQ0KZGF0YSA8LSByZWFkX2NzdigiRGF0YS9Ib3VzZV9vZl9Db3VuY2lsb3JzXzE5OTZfMjAxNy5jc3YiKQ0KYGBgDQoNCiMg44OH44O844K/5YaF44Gu5aSJ5pWw5ZCN44KS56K66KqN44GZ44KLDQoNCmBgYHtyfQ0KbmFtZXMoZGF0YSkNCmBgYA0KDQojIDIwMTXlubTjgavjg4fjg7zjgr/jgpLntZ7jgosNCg0KYGBge3J9DQpkYXRhXzIwMDUgPC0gZGF0YSAlPiUgZmlsdGVyKHllYXIgPT0gMjAwNSkgJT4lIGRyb3BfbmEoKSAjIDIwMDXlubTjga7jg4fjg7zjgr/jgavntZ7jgosNCmBgYA0KDQojIOS4iuS9jTTmlL/lhZrjgavntZ7jgosNCg0K5LuK5Zue44Gv57Ch5Y2Y44Gu44Gf44KB44Gr5LiK5L2NNOaUv+WFmuOBq+e1nuOCi+OAgg0KDQpgYGB7cn0NCmRhdGFfMjAwNSAlPiUgDQogIGdncGxvdChhZXMoeCA9IHBhcnR5X2pwbikpICsNCiAgZ2VvbV9iYXIoKSArDQogIGxhYnMoeCA9ICIiKQ0KYGBgDQoNCmBgYHtyfQ0KZGF0YV8yMDA1ICU8PiUgZmlsdGVyKHBhcnR5X2pwbiAlaW4lIGMoIuiHquawkeWFmiIsICLmsJHkuLvlhZoiLCAi56S+5rCR5YWaIiwgIuWFseeUo+WFmiIpKQ0KYGBgDQoNCiMg566x44Gy44GS5ZuzDQoNCiMjIOS9leOBruWkieWTsuOCguOBquOBhOeuseOBsuOBkuWbsw0KDQpwb2ludOOBr+WkluOCjOWApOOCkuihqOOBmeOAgg0KDQpgYGB7cn0NCmRhdGFfMjAwNSAlPiUgDQogIGdncGxvdChhZXMoeCA9IHBhcnR5X2pwbiwgeSA9IHZvdGVzaGFyZSkpICsNCiAgZ2VvbV9ib3hwbG90KCkgKw0KICBsYWJzKHggPSAiIiwgeSA9ICLlvpfnpajnjociLCB0aXRsZSA9ICIyMDA15bm06KGG6Zmi6YG4OiDlgJnoo5zogIXjga7lvpfnpajnjociKSANCmBgYA0KDQojIyB46Lu444Gu6aCG55Wq44KS5YWl44KM5pu/44GI44KLDQoNCueuseOBsuOBkuWbs+OBp+ikh+aVsOOBruOCr+ODqeOCueOCv+OCkuavlOi8g+OBmeOCi+mam+OBr+OAgW1lZGlhbuOBjOWwj+OBleOBhOmghuOBq+S4puOBueOBn+OBu+OBhuOBjOimi+OChOOBmeOBhOOAgg0K44Gf44Gg44CB5qOS44Kw44Op44OV44Go6YGV44Gj44Gm44CBYGZjdF9yZW9kZXIoKWDjga/poIbluo/nmoTjgarmhI/lkbPlkIjjgYTjgpLmjIHjgZ/jgarjgYRmYWN0b3Llnovjgavjga/kvb/jgYjjgarjgYTjgZ/jgoHjgIENCmB0cmFuc2Zvcm0oeCA9IGZhY3Rvcih4ICxsZXZlbHMgPSBjKCJob2dlMSIsICJob2dlMiIsICJob2dlMyIpKSlg44Gn5Lim44Gz5pu/44GI44KS6KGM44GG44CCDQoNCmBgYHtyfQ0KZGF0YV8yMDA1ICU+JSANCiAgdHJhbnNmb3JtKHBhcnR5X2pwbiA9IGZhY3RvcihwYXJ0eV9qcG4gLGxldmVscyA9IGMoIuWFseeUo+WFmiIsICLnpL7msJHlhZoiLCAi5rCR5Li75YWaIiwgIuiHquawkeWFmiIpKSkgJT4lDQogIGdncGxvdChhZXMoeCA9IHBhcnR5X2pwbiwgeSA9IHZvdGVzaGFyZSkpICsNCiAgZ2VvbV9ib3hwbG90KCkgKw0KICBsYWJzKHggPSAiIiwgeSA9ICLlvpfnpajnjociLCB0aXRsZSA9ICIyMDA15bm06KGG6Zmi6YG4OiDlgJnoo5zogIXjga7lvpfnpajnjociKSANCmBgYA0KDQojIyDjgq/jg6njgrnjgr/jgZTjgajjgavoibLjgpLku5jjgZHjgosNCg0K44Kv44Op44K544K/44GU44Go44Gr6Imy44KS5LuY44GR44KL44Go44CB44KI44KK6KaW6KqN5oCn44GM5ZCR5LiK44GZ44KL77yI44Go5oCd44GGLi4u77yJ44CCDQpgc2NhbGVfZmlsbF9tYW51YWwodmFsdWVzID0gYygiY29sb3IxIiwgImNvbG9yMiIsICJjb2xvcjMiLCAiY29sb3I0IikpYOOBp+OAgTToibLmjIflrprjgZnjgozjgbDoh6rnlLHjgavoibLjgpLku5jjgZHjgonjgozjgovjgIINCltHaXRodWJdKGh0dHBzOi8vZ2l0aHViLmNvbS9GcnVpdEdyYW5vbGEvUl9Cb3hwbG90KeOBruODrOODneOCuOODiOODquOBruS4reOBq+OCq+ODqeODvOODquOCueODiOOCkuWFpeOCjOOBn+OBruOBp+OAgeiIiOWRs+OBruOBguOCi+S6uuOBr+mBiuOCk+OBp+OBv+OBpuOAgg0KDQpgYGB7cn0NCmRhdGFfMjAwNSAlPiUgDQogIHRyYW5zZm9ybShwYXJ0eV9qcG4gPSBmYWN0b3IocGFydHlfanBuICxsZXZlbHMgPSBjKCLlhbHnlKPlhZoiLCAi56S+5rCR5YWaIiwgIuawkeS4u+WFmiIsICLoh6rmsJHlhZoiKSkpICU+JQ0KICBnZ3Bsb3QoYWVzKHggPSBwYXJ0eV9qcG4sIHkgPSB2b3Rlc2hhcmUpKSArDQogIGdlb21fYm94cGxvdChhZXMoZmlsbCA9IHBhcnR5X2pwbiksIHNob3cubGVnZW5kID0gRikgKw0KICBsYWJzKHggPSAiIiwgeSA9ICLlvpfnpajnjociLCB0aXRsZSA9ICIyMDA15bm06KGG6Zmi6YG4OiDlgJnoo5zogIXjga7lvpfnpajnjociKSANCmBgYA0KDQojIyDlubPlnYflgKTjgpLku5jjgZHliqDjgYjjgosNCg0K44Gf44G+44GrdOaknOWumuOBqOOBi+OBmeOCi+OBqOOAgeOAjOW5s+Wdh+WApOOCguS4gOe3kuOBq+imi+OBn+OBhOOBquOBgeOAjeOBqOaAneOBhuOBk+OBqOOCguOBguOCi+OAguOBneOBruOBqOOBjeOBr+S7peS4i+OBruOCiOOBhuOBq+OBmeOCjOOBsOOAgeW5s+Wdh+WApOOCgueiuuiqjeOBp+OBjeOCi+OAgg0KDQrnpL7msJHlhZrjga7lubPlnYflgKTjgahtZWRpYW7jgavplovjgY3jgYzjgYLjgovjgojjgYbjgaDjgILjgoLjgZfjgYvjgZfjgZ/jgonjg5Ljgrnjg4jjgrDjg6njg6Djgavmrarjgb/jgYzjgYLjgovjgYvjgoLjgIINCg0KYGBge3J9DQpkYXRhXzIwMDUgJT4lIA0KICB0cmFuc2Zvcm0ocGFydHlfanBuID0gZmFjdG9yKHBhcnR5X2pwbiAsbGV2ZWxzID0gYygi5YWx55Sj5YWaIiwgIuekvuawkeWFmiIsICLmsJHkuLvlhZoiLCAi6Ieq5rCR5YWaIikpKSAlPiUNCiAgZ2dwbG90KGFlcyh4ID0gcGFydHlfanBuLCB5ID0gdm90ZXNoYXJlKSkgKw0KICBnZW9tX2JveHBsb3QoYWVzKGZpbGwgPSBwYXJ0eV9qcG4pLCBzaG93LmxlZ2VuZCA9IEYpICsNCiAgbGFicyh4ID0gIiIsIHkgPSAi5b6X56Wo546HIiwgdGl0bGUgPSAiMjAwNeW5tOihhumZoumBuDog5YCZ6KOc6ICF44Gu5b6X56Wo546HIikgKw0KICBzdGF0X3N1bW1hcnkoZnVuID0gbWVhbiwgZ2VvbSA9ICJwb2ludCIsIGNvbG9yID0gIiNGQzRFMDciKSANCmBgYA0KDQojIyDjg5DjgqTjgqrjg6rjg7Pjg5fjg63jg4Pjg4gNCg0K44OQ44Kk44Kq44Oq44Oz44OX44Ot44OD44OI44KS5LiA57eS44Gr5o+P44GP44GT44Go44Gn44CB44OH44O844K/44Gu5YiG5biD44KS56K66KqN44GX44Gq44GM44KJ6KaB57SE57Wx6KiI6YeP44KS6KaL44KL44GT44Go44GM44Gn44GN44KL44CCDQrnpL7msJHlhZrjga7lvpfnpajnjofjga/lj7PmlrnlkJHjgavoo77ph47jgYzluoPjgYTliIbluIPjgZ/jgoHjgIHlubPlnYflgKTjgahtZWRpYW7jgYzpm6LjgozjgabjgYTjgZ/jgojjgYbjgaDjgIINCuWFseeUo+WFmuOBr+OBguOBvuOCiuODh+ODvOOCv+OBq+OBsOOCieOBpOOBjeOBjOeEoeOBhOOCiOOBhuOBq+imi+OBiOOCi+OAgg0KDQpgYGB7cn0NCmRhdGFfMjAwNSAlPiUgDQogIHRyYW5zZm9ybShwYXJ0eV9qcG4gPSBmYWN0b3IocGFydHlfanBuICxsZXZlbHMgPSBjKCLlhbHnlKPlhZoiLCAi56S+5rCR5YWaIiwgIuawkeS4u+WFmiIsICLoh6rmsJHlhZoiKSkpICU+JQ0KICBnZ3Bsb3QoYWVzKHggPSBwYXJ0eV9qcG4sIHkgPSB2b3Rlc2hhcmUpKSArDQogIGdlb21fdmlvbGluKGFlcyhmaWxsID0gcGFydHlfanBuKSwgYWxwaGEgPSAwLjMsIHNob3cubGVnZW5kID0gRikgKw0KICBnZW9tX2JveHBsb3QoYWxwaGEgPSAuNSwgc2hvdy5sZWdlbmQgPSBGKSArDQogIGxhYnMoeCA9ICIiLCB5ID0gIuW+l+elqOeOhyIsIHRpdGxlID0gIjIwMDXlubTooYbpmaLpgbg6IOWAmeijnOiAheOBruW+l+elqOeOhyIpICsNCiAgc3RhdF9zdW1tYXJ5KGZ1biA9IG1lYW4sIGdlb20gPSAicG9pbnQiLCBjb2xvciA9ICIjRkM0RTA3IikgKw0KICBjb29yZF9mbGlwKCkNCmBgYA0KDQo8SFI+DQoNCuOBk+OBruiomOS6i+OBruOCs+ODvOODieOCkuOBvuOBqOOCgeOBn+OCguOBruOBr1tHaXRodWJdKGh0dHBzOi8vZ2l0aHViLmNvbS9GcnVpdEdyYW5vbGEvUl9Cb3hwbG90KeOBq+OBguOCiuOBvuOBmeOAgg0KDQo8YnV0dG9uPltIb21l44Gr5oi744KLXShpbmRleC5odG1sKTwvYnV0dG9uPg0K</div>
+
+
+</div>
+</div>
+
+</div>
+
+<script>
+
+// add bootstrap table styles to pandoc tables
+function bootstrapStylePandocTables() {
+  $('tr.odd').parent('tbody').parent('table').addClass('table table-condensed');
+}
+$(document).ready(function () {
+  bootstrapStylePandocTables();
+});
+
+
+</script>
+
+<!-- tabsets -->
+
+<script>
+$(document).ready(function () {
+  window.buildTabsets("TOC");
+});
+
+$(document).ready(function () {
+  $('.tabset-dropdown > .nav-tabs > li').click(function () {
+    $(this).parent().toggleClass('nav-tabs-open');
+  });
+});
+</script>
+
+<!-- code folding -->
+<script>
+$(document).ready(function () {
+  window.initializeSourceEmbed("Boxplot.Rmd");
+  window.initializeCodeFolding("show" === "show");
+});
+</script>
+
+<script>
+$(document).ready(function ()  {
+
+    // move toc-ignore selectors from section div to header
+    $('div.section.toc-ignore')
+        .removeClass('toc-ignore')
+        .children('h1,h2,h3,h4,h5').addClass('toc-ignore');
+
+    // establish options
+    var options = {
+      selectors: "h1,h2,h3",
+      theme: "bootstrap3",
+      context: '.toc-content',
+      hashGenerator: function (text) {
+        return text.replace(/[.\\/?&!#<>]/g, '').replace(/\s/g, '_');
+      },
+      ignoreSelector: ".toc-ignore",
+      scrollTo: 0
+    };
+    options.showAndHide = true;
+    options.smoothScroll = true;
+
+    // tocify
+    var toc = $("#TOC").tocify(options).data("toc-tocify");
+});
+</script>
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>
