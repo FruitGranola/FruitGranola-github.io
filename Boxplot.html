@@ -406,81 +406,208 @@ div.tocify {
 
 
 <h1 class="title toc-ignore">Boxplot</h1>
-<h4 class="date">2021-02-21 12:26:47</h4>
+<h4 class="date">2021-02-21 14:11:34</h4>
 
 </div>
 
 
 <div id="使用するパッケージ" class="section level1" number="1">
 <h1 number="1"><span class="header-section-number">1</span> 使用するパッケージ</h1>
-<pre class="r"><code>library(tidyverse)
-library(magrittr)</code></pre>
+<p>準備していないパッケージは<code>install.packages("package_name")</code>でインストールする。</p>
+<pre class="r"><code># 使用するパッケージ
+library(tidyverse) # データの整形から可視化まで
+library(magrittr) # パイプ処理を使いこなすせ！
+
+# ggplot2 の theme をあらかじめ設定しておく
+theme_set(theme_minimal(base_size = 15))</code></pre>
 </div>
-<div id="ggplot2-の-theme-をあらかじめ設定しておく" class="section level1" number="2">
-<h1 number="2"><span class="header-section-number">2</span> ggplot2 の theme をあらかじめ設定しておく</h1>
-<pre class="r"><code>theme_set(theme_minimal(base_size = 15))</code></pre>
-</div>
-<div id="使用するデータ" class="section level1" number="3">
-<h1 number="3"><span class="header-section-number">3</span> 使用するデータ</h1>
+<div id="データの読み込み" class="section level1" number="2">
+<h1 number="2"><span class="header-section-number">2</span> データの読み込み</h1>
+<p>今回使用するのは衆院選に出馬した各候補者のデータだ。</p>
+<p>1996年から2017年までのデータが詰まっている。</p>
 <p>データは<a href="./data/House_of_Councilors_1996_2017.csv">こちら</a></p>
-<pre class="r"><code>data &lt;- read_csv(&quot;Data/House_of_Councilors_1996_2017.csv&quot;)</code></pre>
-</div>
-<div id="データ内の変数名を確認する" class="section level1" number="4">
-<h1 number="4"><span class="header-section-number">4</span> データ内の変数名を確認する</h1>
+<pre class="r"><code>data &lt;- read_csv(&quot;./data/House_of_Councilors_1996_2017.csv&quot;) # 1996年～2017年までの衆院選データ</code></pre>
+<div id="データ内の変数名を確認する" class="section level2" number="2.1">
+<h2 number="2.1"><span class="header-section-number">2.1</span> データ内の変数名を確認する</h2>
+<p>どんな変数があるか見てみよう。</p>
 <pre class="r"><code>names(data)</code></pre>
 <pre><code> [1] &quot;year&quot;       &quot;ku&quot;         &quot;kun&quot;        &quot;status&quot;     &quot;name&quot;      
  [6] &quot;party&quot;      &quot;party_code&quot; &quot;previous&quot;   &quot;wl&quot;         &quot;voteshare&quot; 
 [11] &quot;age&quot;        &quot;nocand&quot;     &quot;rank&quot;       &quot;vote&quot;       &quot;eligible&quot;  
 [16] &quot;turnout&quot;    &quot;exp&quot;        &quot;expm&quot;       &quot;vs&quot;         &quot;exppv&quot;     
 [21] &quot;smd&quot;        &quot;party_jpn&quot; </code></pre>
+<p>各変数が意味するものは以下のようになっている。</p>
+<table>
+<thead>
+<tr class="header">
+<th>変数名</th>
+<th>内容 　</th>
+<th>備考</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>year</td>
+<td>実施年 　</td>
+<td></td>
+</tr>
+<tr class="even">
+<td>ku</td>
+<td>都道府県</td>
+<td></td>
+</tr>
+<tr class="odd">
+<td>kun</td>
+<td>区域 　</td>
+<td></td>
+</tr>
+<tr class="even">
+<td>status</td>
+<td>現職か否か</td>
+<td>0 = 新人・元, 1 = 現職</td>
+</tr>
+<tr class="odd">
+<td>name</td>
+<td>名前</td>
+<td></td>
+</tr>
+<tr class="even">
+<td>party</td>
+<td>所属政党</td>
+<td>ローマ字での略語</td>
+</tr>
+<tr class="odd">
+<td>party_code</td>
+<td>所属政党</td>
+<td>数字で通し番号</td>
+</tr>
+<tr class="even">
+<td>previous</td>
+<td>当選回数</td>
+<td></td>
+</tr>
+<tr class="odd">
+<td>wl</td>
+<td>当落結果　</td>
+<td>0 = 落選, 1 = 当選, 2 = 復活当選</td>
+</tr>
+<tr class="even">
+<td>voteshare</td>
+<td>得票率</td>
+<td>単位: %</td>
+</tr>
+<tr class="odd">
+<td>age</td>
+<td>年齢</td>
+<td></td>
+</tr>
+<tr class="even">
+<td>nocand</td>
+<td>候補者数</td>
+<td></td>
+</tr>
+<tr class="odd">
+<td>rank</td>
+<td>順位　　　</td>
+<td></td>
+</tr>
+<tr class="even">
+<td>vote</td>
+<td>得票数　　</td>
+<td></td>
+</tr>
+<tr class="odd">
+<td>eligible</td>
+<td>有権者数</td>
+<td></td>
+</tr>
+<tr class="even">
+<td>turnout</td>
+<td>投票率</td>
+<td>単位: %</td>
+</tr>
+<tr class="odd">
+<td>exp</td>
+<td>選挙費用</td>
+<td>単位: 円</td>
+</tr>
+<tr class="even">
+<td>expm</td>
+<td>選挙費用　</td>
+<td>単位: 百万円</td>
+</tr>
+<tr class="odd">
+<td>vs</td>
+<td>得票割合</td>
+<td>小数で表記</td>
+</tr>
+<tr class="even">
+<td>exppv</td>
+<td>選挙費用</td>
+<td>単位: 円（有権者一人当たりの選挙費用）</td>
+</tr>
+<tr class="odd">
+<td>smd</td>
+<td>当落</td>
+<td>0 = 落選, 1 = 当選</td>
+</tr>
+<tr class="even">
+<td>party_jpn</td>
+<td>所属政党　</td>
+<td>日本語</td>
+</tr>
+</tbody>
+</table>
 </div>
-<div id="年にデータを絞る" class="section level1" number="5">
-<h1 number="5"><span class="header-section-number">5</span> 2015年にデータを絞る</h1>
-<pre class="r"><code>data_2005 &lt;- data %&gt;% filter(year == 2005) %&gt;% drop_na() # 2005年のデータに絞る</code></pre>
+<div id="データの整形" class="section level2" number="2.2">
+<h2 number="2.2"><span class="header-section-number">2.2</span> データの整形</h2>
+<p>今回は得票率(voteshare)を使ってヒストグラムを描いていく。</p>
+<p>箱ひげ図はデータの分布を確認するために使用する。</p>
+<p>今回は選挙データを使用するので、各政党の得票率(voteshare)の分布を可視化してみる。</p>
+<pre class="r"><code>data %&lt;&gt;% 
+  select(year, party_jpn, voteshare) %&gt;% # 使用する変数を抽出
+  filter(party_jpn %in% c(&quot;共産党&quot;, &quot;社民党&quot;, &quot;民主党&quot;, &quot;自民党&quot;)) %&gt;% # 簡単のため、政党を絞る
+  as.data.frame() %&gt;% # 一応
+  drop_na() # naを落とす</code></pre>
+<p>また、2005年の衆院選データを可視化することとする。</p>
+<pre class="r"><code>data_2005 &lt;- data %&gt;% 
+  filter(year == 2005)</code></pre>
 </div>
-<div id="上位4政党に絞る" class="section level1" number="6">
-<h1 number="6"><span class="header-section-number">6</span> 上位4政党に絞る</h1>
-<p>今回は簡単のために上位4政党に絞る。</p>
-<pre class="r"><code>data_2005 %&gt;% 
-  ggplot(aes(x = party_jpn)) +
-  geom_bar() +
-  labs(x = &quot;&quot;)</code></pre>
-<p><img src="Boxplot_files/figure-html/unnamed-chunk-7-1.png" width="672" style="display: block; margin: auto;" /></p>
-<pre class="r"><code>data_2005 %&lt;&gt;% filter(party_jpn %in% c(&quot;自民党&quot;, &quot;民主党&quot;, &quot;社民党&quot;, &quot;共産党&quot;))</code></pre>
 </div>
-<div id="箱ひげ図" class="section level1" number="7">
-<h1 number="7"><span class="header-section-number">7</span> 箱ひげ図</h1>
-<div id="何の変哲もない箱ひげ図" class="section level2" number="7.1">
-<h2 number="7.1"><span class="header-section-number">7.1</span> 何の変哲もない箱ひげ図</h2>
+<div id="普通の箱ひげ図" class="section level1" number="3">
+<h1 number="3"><span class="header-section-number">3</span> 普通の箱ひげ図</h1>
 <p>pointは外れ値を表す。</p>
 <pre class="r"><code>data_2005 %&gt;% 
-  ggplot(aes(x = party_jpn, y = voteshare)) +
+  ggplot(aes(x = party_jpn, 
+             y = voteshare)) +
   geom_boxplot() +
-  labs(x = &quot;&quot;, y = &quot;得票率&quot;, title = &quot;2005年衆院選: 候補者の得票率&quot;) </code></pre>
-<p><img src="Boxplot_files/figure-html/unnamed-chunk-9-1.png" width="672" style="display: block; margin: auto;" /></p>
+  labs(x = &quot;&quot;, 
+       y = &quot;得票率&quot;, 
+       title = &quot;2005年衆院選: 候補者の得票率&quot;) </code></pre>
+<p><img src="Boxplot_files/figure-html/unnamed-chunk-7-1.png" width="768" style="display: block; margin: auto;" /></p>
 </div>
-<div id="x軸の順番を入れ替える" class="section level2" number="7.2">
-<h2 number="7.2"><span class="header-section-number">7.2</span> x軸の順番を入れ替える</h2>
+<div id="箱の並び替え" class="section level1" number="4">
+<h1 number="4"><span class="header-section-number">4</span> 箱の並び替え</h1>
 <p>箱ひげ図で複数のクラスタを比較する際は、medianが小さい順に並べたほうが見やすい。 ただ、棒グラフと違って、<code>fct_reoder()</code>は順序的な意味合いを持たないfactor型には使えないため、 <code>transform(x = factor(x ,levels = c("hoge1", "hoge2", "hoge3")))</code>で並び替えを行う。</p>
 <pre class="r"><code>data_2005 %&gt;% 
   transform(party_jpn = factor(party_jpn ,levels = c(&quot;共産党&quot;, &quot;社民党&quot;, &quot;民主党&quot;, &quot;自民党&quot;))) %&gt;%
   ggplot(aes(x = party_jpn, y = voteshare)) +
   geom_boxplot() +
   labs(x = &quot;&quot;, y = &quot;得票率&quot;, title = &quot;2005年衆院選: 候補者の得票率&quot;) </code></pre>
-<p><img src="Boxplot_files/figure-html/unnamed-chunk-10-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p><img src="Boxplot_files/figure-html/unnamed-chunk-8-1.png" width="768" style="display: block; margin: auto;" /></p>
 </div>
-<div id="クラスタごとに色を付ける" class="section level2" number="7.3">
-<h2 number="7.3"><span class="header-section-number">7.3</span> クラスタごとに色を付ける</h2>
+<div id="クラスタごとに色を付ける" class="section level1" number="5">
+<h1 number="5"><span class="header-section-number">5</span> クラスタごとに色を付ける</h1>
 <p>クラスタごとに色を付けると、より視認性が向上する（と思う…）。 <code>scale_fill_manual(values = c("color1", "color2", "color3", "color4"))</code>で、4色指定すれば自由に色を付けられる。 <a href="https://github.com/FruitGranola/R_Boxplot">Github</a>のレポジトリの中にカラーリストを入れたので、興味のある人は遊んでみて。</p>
 <pre class="r"><code>data_2005 %&gt;% 
   transform(party_jpn = factor(party_jpn ,levels = c(&quot;共産党&quot;, &quot;社民党&quot;, &quot;民主党&quot;, &quot;自民党&quot;))) %&gt;%
   ggplot(aes(x = party_jpn, y = voteshare)) +
   geom_boxplot(aes(fill = party_jpn), show.legend = F) +
   labs(x = &quot;&quot;, y = &quot;得票率&quot;, title = &quot;2005年衆院選: 候補者の得票率&quot;) </code></pre>
-<p><img src="Boxplot_files/figure-html/unnamed-chunk-11-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p><img src="Boxplot_files/figure-html/unnamed-chunk-9-1.png" width="768" style="display: block; margin: auto;" /></p>
 </div>
-<div id="平均値を付け加える" class="section level2" number="7.4">
-<h2 number="7.4"><span class="header-section-number">7.4</span> 平均値を付け加える</h2>
+<div id="平均値を付け加える" class="section level1" number="6">
+<h1 number="6"><span class="header-section-number">6</span> 平均値を付け加える</h1>
 <p>たまにt検定とかすると、「平均値も一緒に見たいなぁ」と思うこともある。そのときは以下のようにすれば、平均値も確認できる。</p>
 <p>社民党の平均値とmedianに開きがあるようだ。もしかしたらヒストグラムに歪みがあるかも。</p>
 <pre class="r"><code>data_2005 %&gt;% 
@@ -489,10 +616,10 @@ library(magrittr)</code></pre>
   geom_boxplot(aes(fill = party_jpn), show.legend = F) +
   labs(x = &quot;&quot;, y = &quot;得票率&quot;, title = &quot;2005年衆院選: 候補者の得票率&quot;) +
   stat_summary(fun = mean, geom = &quot;point&quot;, color = &quot;#FC4E07&quot;) </code></pre>
-<p><img src="Boxplot_files/figure-html/unnamed-chunk-12-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p><img src="Boxplot_files/figure-html/unnamed-chunk-10-1.png" width="768" style="display: block; margin: auto;" /></p>
 </div>
-<div id="バイオリンプロット" class="section level2" number="7.5">
-<h2 number="7.5"><span class="header-section-number">7.5</span> バイオリンプロット</h2>
+<div id="バイオリンプロット" class="section level1" number="7">
+<h1 number="7"><span class="header-section-number">7</span> バイオリンプロット</h1>
 <p>バイオリンプロットを一緒に描くことで、データの分布を確認しながら要約統計量を見ることができる。 社民党の得票率は右方向に裾野が広い分布ため、平均値とmedianが離れていたようだ。 共産党はあまりデータにばらつきが無いように見える。</p>
 <pre class="r"><code>data_2005 %&gt;% 
   transform(party_jpn = factor(party_jpn ,levels = c(&quot;共産党&quot;, &quot;社民党&quot;, &quot;民主党&quot;, &quot;自民党&quot;))) %&gt;%
@@ -502,16 +629,12 @@ library(magrittr)</code></pre>
   labs(x = &quot;&quot;, y = &quot;得票率&quot;, title = &quot;2005年衆院選: 候補者の得票率&quot;) +
   stat_summary(fun = mean, geom = &quot;point&quot;, color = &quot;#FC4E07&quot;) +
   coord_flip()</code></pre>
-<p><img src="Boxplot_files/figure-html/unnamed-chunk-13-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p><img src="Boxplot_files/figure-html/unnamed-chunk-11-1.png" width="768" style="display: block; margin: auto;" /></p>
 <HR>
 <p>この記事のコードをまとめたものは<a href="https://github.com/FruitGranola/R_Boxplot">Github</a>にあります。</p>
-<button>
-<a href="index.html">Homeに戻る</a>
-</button>
-</div>
 </div>
 
-<div id="rmd-source-code">LS0tDQp0aXRsZTogIkJveHBsb3QiDQpkYXRlOiAiYHIgU3lzLnRpbWUoKWAiDQotLS0NCg0KYGBge3IsIGluY2x1ZGU9RkFMU0V9DQprbml0cjo6b3B0c19jaHVuayRzZXQod2FybmluZyA9IEYsDQogICAgICAgICAgICAgICAgICAgICAgbWVzc2FnZSA9IEYsDQogICAgICAgICAgICAgICAgICAgICAgY29tbWVudCA9ICIiLA0KICAgICAgICAgICAgICAgICAgICAgIGZpZy5hbGlnbiA9ICJjZW50ZXIiKQ0KYGBgDQoNCiMg5L2/55So44GZ44KL44OR44OD44Kx44O844K4DQoNCmBgYHtyfQ0KbGlicmFyeSh0aWR5dmVyc2UpDQpsaWJyYXJ5KG1hZ3JpdHRyKQ0KYGBgDQoNCiMgZ2dwbG90MiDjga4gdGhlbWUg44KS44GC44KJ44GL44GY44KB6Kit5a6a44GX44Gm44GK44GPDQoNCmBgYHtyfQ0KdGhlbWVfc2V0KHRoZW1lX21pbmltYWwoYmFzZV9zaXplID0gMTUpKQ0KYGBgDQoNCiMg5L2/55So44GZ44KL44OH44O844K/DQoNCuODh+ODvOOCv+OBr1vjgZPjgaHjgoldKC4vZGF0YS9Ib3VzZV9vZl9Db3VuY2lsb3JzXzE5OTZfMjAxNy5jc3YpDQoNCmBgYHtyfQ0KZGF0YSA8LSByZWFkX2NzdigiRGF0YS9Ib3VzZV9vZl9Db3VuY2lsb3JzXzE5OTZfMjAxNy5jc3YiKQ0KYGBgDQoNCiMg44OH44O844K/5YaF44Gu5aSJ5pWw5ZCN44KS56K66KqN44GZ44KLDQoNCmBgYHtyfQ0KbmFtZXMoZGF0YSkNCmBgYA0KDQojIDIwMTXlubTjgavjg4fjg7zjgr/jgpLntZ7jgosNCg0KYGBge3J9DQpkYXRhXzIwMDUgPC0gZGF0YSAlPiUgZmlsdGVyKHllYXIgPT0gMjAwNSkgJT4lIGRyb3BfbmEoKSAjIDIwMDXlubTjga7jg4fjg7zjgr/jgavntZ7jgosNCmBgYA0KDQojIOS4iuS9jTTmlL/lhZrjgavntZ7jgosNCg0K5LuK5Zue44Gv57Ch5Y2Y44Gu44Gf44KB44Gr5LiK5L2NNOaUv+WFmuOBq+e1nuOCi+OAgg0KDQpgYGB7cn0NCmRhdGFfMjAwNSAlPiUgDQogIGdncGxvdChhZXMoeCA9IHBhcnR5X2pwbikpICsNCiAgZ2VvbV9iYXIoKSArDQogIGxhYnMoeCA9ICIiKQ0KYGBgDQoNCmBgYHtyfQ0KZGF0YV8yMDA1ICU8PiUgZmlsdGVyKHBhcnR5X2pwbiAlaW4lIGMoIuiHquawkeWFmiIsICLmsJHkuLvlhZoiLCAi56S+5rCR5YWaIiwgIuWFseeUo+WFmiIpKQ0KYGBgDQoNCiMg566x44Gy44GS5ZuzDQoNCiMjIOS9leOBruWkieWTsuOCguOBquOBhOeuseOBsuOBkuWbsw0KDQpwb2ludOOBr+WkluOCjOWApOOCkuihqOOBmeOAgg0KDQpgYGB7cn0NCmRhdGFfMjAwNSAlPiUgDQogIGdncGxvdChhZXMoeCA9IHBhcnR5X2pwbiwgeSA9IHZvdGVzaGFyZSkpICsNCiAgZ2VvbV9ib3hwbG90KCkgKw0KICBsYWJzKHggPSAiIiwgeSA9ICLlvpfnpajnjociLCB0aXRsZSA9ICIyMDA15bm06KGG6Zmi6YG4OiDlgJnoo5zogIXjga7lvpfnpajnjociKSANCmBgYA0KDQojIyB46Lu444Gu6aCG55Wq44KS5YWl44KM5pu/44GI44KLDQoNCueuseOBsuOBkuWbs+OBp+ikh+aVsOOBruOCr+ODqeOCueOCv+OCkuavlOi8g+OBmeOCi+mam+OBr+OAgW1lZGlhbuOBjOWwj+OBleOBhOmghuOBq+S4puOBueOBn+OBu+OBhuOBjOimi+OChOOBmeOBhOOAgg0K44Gf44Gg44CB5qOS44Kw44Op44OV44Go6YGV44Gj44Gm44CBYGZjdF9yZW9kZXIoKWDjga/poIbluo/nmoTjgarmhI/lkbPlkIjjgYTjgpLmjIHjgZ/jgarjgYRmYWN0b3Llnovjgavjga/kvb/jgYjjgarjgYTjgZ/jgoHjgIENCmB0cmFuc2Zvcm0oeCA9IGZhY3Rvcih4ICxsZXZlbHMgPSBjKCJob2dlMSIsICJob2dlMiIsICJob2dlMyIpKSlg44Gn5Lim44Gz5pu/44GI44KS6KGM44GG44CCDQoNCmBgYHtyfQ0KZGF0YV8yMDA1ICU+JSANCiAgdHJhbnNmb3JtKHBhcnR5X2pwbiA9IGZhY3RvcihwYXJ0eV9qcG4gLGxldmVscyA9IGMoIuWFseeUo+WFmiIsICLnpL7msJHlhZoiLCAi5rCR5Li75YWaIiwgIuiHquawkeWFmiIpKSkgJT4lDQogIGdncGxvdChhZXMoeCA9IHBhcnR5X2pwbiwgeSA9IHZvdGVzaGFyZSkpICsNCiAgZ2VvbV9ib3hwbG90KCkgKw0KICBsYWJzKHggPSAiIiwgeSA9ICLlvpfnpajnjociLCB0aXRsZSA9ICIyMDA15bm06KGG6Zmi6YG4OiDlgJnoo5zogIXjga7lvpfnpajnjociKSANCmBgYA0KDQojIyDjgq/jg6njgrnjgr/jgZTjgajjgavoibLjgpLku5jjgZHjgosNCg0K44Kv44Op44K544K/44GU44Go44Gr6Imy44KS5LuY44GR44KL44Go44CB44KI44KK6KaW6KqN5oCn44GM5ZCR5LiK44GZ44KL77yI44Go5oCd44GGLi4u77yJ44CCDQpgc2NhbGVfZmlsbF9tYW51YWwodmFsdWVzID0gYygiY29sb3IxIiwgImNvbG9yMiIsICJjb2xvcjMiLCAiY29sb3I0IikpYOOBp+OAgTToibLmjIflrprjgZnjgozjgbDoh6rnlLHjgavoibLjgpLku5jjgZHjgonjgozjgovjgIINCltHaXRodWJdKGh0dHBzOi8vZ2l0aHViLmNvbS9GcnVpdEdyYW5vbGEvUl9Cb3hwbG90KeOBruODrOODneOCuOODiOODquOBruS4reOBq+OCq+ODqeODvOODquOCueODiOOCkuWFpeOCjOOBn+OBruOBp+OAgeiIiOWRs+OBruOBguOCi+S6uuOBr+mBiuOCk+OBp+OBv+OBpuOAgg0KDQpgYGB7cn0NCmRhdGFfMjAwNSAlPiUgDQogIHRyYW5zZm9ybShwYXJ0eV9qcG4gPSBmYWN0b3IocGFydHlfanBuICxsZXZlbHMgPSBjKCLlhbHnlKPlhZoiLCAi56S+5rCR5YWaIiwgIuawkeS4u+WFmiIsICLoh6rmsJHlhZoiKSkpICU+JQ0KICBnZ3Bsb3QoYWVzKHggPSBwYXJ0eV9qcG4sIHkgPSB2b3Rlc2hhcmUpKSArDQogIGdlb21fYm94cGxvdChhZXMoZmlsbCA9IHBhcnR5X2pwbiksIHNob3cubGVnZW5kID0gRikgKw0KICBsYWJzKHggPSAiIiwgeSA9ICLlvpfnpajnjociLCB0aXRsZSA9ICIyMDA15bm06KGG6Zmi6YG4OiDlgJnoo5zogIXjga7lvpfnpajnjociKSANCmBgYA0KDQojIyDlubPlnYflgKTjgpLku5jjgZHliqDjgYjjgosNCg0K44Gf44G+44GrdOaknOWumuOBqOOBi+OBmeOCi+OBqOOAgeOAjOW5s+Wdh+WApOOCguS4gOe3kuOBq+imi+OBn+OBhOOBquOBgeOAjeOBqOaAneOBhuOBk+OBqOOCguOBguOCi+OAguOBneOBruOBqOOBjeOBr+S7peS4i+OBruOCiOOBhuOBq+OBmeOCjOOBsOOAgeW5s+Wdh+WApOOCgueiuuiqjeOBp+OBjeOCi+OAgg0KDQrnpL7msJHlhZrjga7lubPlnYflgKTjgahtZWRpYW7jgavplovjgY3jgYzjgYLjgovjgojjgYbjgaDjgILjgoLjgZfjgYvjgZfjgZ/jgonjg5Ljgrnjg4jjgrDjg6njg6Djgavmrarjgb/jgYzjgYLjgovjgYvjgoLjgIINCg0KYGBge3J9DQpkYXRhXzIwMDUgJT4lIA0KICB0cmFuc2Zvcm0ocGFydHlfanBuID0gZmFjdG9yKHBhcnR5X2pwbiAsbGV2ZWxzID0gYygi5YWx55Sj5YWaIiwgIuekvuawkeWFmiIsICLmsJHkuLvlhZoiLCAi6Ieq5rCR5YWaIikpKSAlPiUNCiAgZ2dwbG90KGFlcyh4ID0gcGFydHlfanBuLCB5ID0gdm90ZXNoYXJlKSkgKw0KICBnZW9tX2JveHBsb3QoYWVzKGZpbGwgPSBwYXJ0eV9qcG4pLCBzaG93LmxlZ2VuZCA9IEYpICsNCiAgbGFicyh4ID0gIiIsIHkgPSAi5b6X56Wo546HIiwgdGl0bGUgPSAiMjAwNeW5tOihhumZoumBuDog5YCZ6KOc6ICF44Gu5b6X56Wo546HIikgKw0KICBzdGF0X3N1bW1hcnkoZnVuID0gbWVhbiwgZ2VvbSA9ICJwb2ludCIsIGNvbG9yID0gIiNGQzRFMDciKSANCmBgYA0KDQojIyDjg5DjgqTjgqrjg6rjg7Pjg5fjg63jg4Pjg4gNCg0K44OQ44Kk44Kq44Oq44Oz44OX44Ot44OD44OI44KS5LiA57eS44Gr5o+P44GP44GT44Go44Gn44CB44OH44O844K/44Gu5YiG5biD44KS56K66KqN44GX44Gq44GM44KJ6KaB57SE57Wx6KiI6YeP44KS6KaL44KL44GT44Go44GM44Gn44GN44KL44CCDQrnpL7msJHlhZrjga7lvpfnpajnjofjga/lj7PmlrnlkJHjgavoo77ph47jgYzluoPjgYTliIbluIPjgZ/jgoHjgIHlubPlnYflgKTjgahtZWRpYW7jgYzpm6LjgozjgabjgYTjgZ/jgojjgYbjgaDjgIINCuWFseeUo+WFmuOBr+OBguOBvuOCiuODh+ODvOOCv+OBq+OBsOOCieOBpOOBjeOBjOeEoeOBhOOCiOOBhuOBq+imi+OBiOOCi+OAgg0KDQpgYGB7cn0NCmRhdGFfMjAwNSAlPiUgDQogIHRyYW5zZm9ybShwYXJ0eV9qcG4gPSBmYWN0b3IocGFydHlfanBuICxsZXZlbHMgPSBjKCLlhbHnlKPlhZoiLCAi56S+5rCR5YWaIiwgIuawkeS4u+WFmiIsICLoh6rmsJHlhZoiKSkpICU+JQ0KICBnZ3Bsb3QoYWVzKHggPSBwYXJ0eV9qcG4sIHkgPSB2b3Rlc2hhcmUpKSArDQogIGdlb21fdmlvbGluKGFlcyhmaWxsID0gcGFydHlfanBuKSwgYWxwaGEgPSAwLjMsIHNob3cubGVnZW5kID0gRikgKw0KICBnZW9tX2JveHBsb3QoYWxwaGEgPSAuNSwgc2hvdy5sZWdlbmQgPSBGKSArDQogIGxhYnMoeCA9ICIiLCB5ID0gIuW+l+elqOeOhyIsIHRpdGxlID0gIjIwMDXlubTooYbpmaLpgbg6IOWAmeijnOiAheOBruW+l+elqOeOhyIpICsNCiAgc3RhdF9zdW1tYXJ5KGZ1biA9IG1lYW4sIGdlb20gPSAicG9pbnQiLCBjb2xvciA9ICIjRkM0RTA3IikgKw0KICBjb29yZF9mbGlwKCkNCmBgYA0KDQo8SFI+DQoNCuOBk+OBruiomOS6i+OBruOCs+ODvOODieOCkuOBvuOBqOOCgeOBn+OCguOBruOBr1tHaXRodWJdKGh0dHBzOi8vZ2l0aHViLmNvbS9GcnVpdEdyYW5vbGEvUl9Cb3hwbG90KeOBq+OBguOCiuOBvuOBmeOAgg0KDQo8YnV0dG9uPltIb21l44Gr5oi744KLXShpbmRleC5odG1sKTwvYnV0dG9uPg0K</div>
+<div id="rmd-source-code">LS0tDQp0aXRsZTogIkJveHBsb3QiDQpkYXRlOiAiYHIgU3lzLnRpbWUoKWAiDQotLS0NCg0KYGBge3IsIGluY2x1ZGU9RkFMU0V9DQprbml0cjo6b3B0c19jaHVuayRzZXQod2FybmluZyA9IEYsDQogICAgICAgICAgICAgICAgICAgICAgbWVzc2FnZSA9IEYsDQogICAgICAgICAgICAgICAgICAgICAgY29tbWVudCA9ICIiLA0KICAgICAgICAgICAgICAgICAgICAgIGZpZy5hbGlnbiA9ICJjZW50ZXIiLA0KICAgICAgICAgICAgICAgICAgICAgIGZpZy53aWR0aCA9IDgsDQogICAgICAgICAgICAgICAgICAgICAgZmlnLmhlaWdodCA9IDUpDQpgYGANCg0KIyDkvb/nlKjjgZnjgovjg5Hjg4PjgrHjg7zjgrgNCg0K5rqW5YKZ44GX44Gm44GE44Gq44GE44OR44OD44Kx44O844K444GvYGluc3RhbGwucGFja2FnZXMoInBhY2thZ2VfbmFtZSIpYOOBp+OCpOODs+OCueODiOODvOODq+OBmeOCi+OAgg0KDQpgYGB7cn0NCiMg5L2/55So44GZ44KL44OR44OD44Kx44O844K4DQpsaWJyYXJ5KHRpZHl2ZXJzZSkgIyDjg4fjg7zjgr/jga7mlbTlvaLjgYvjgonlj6/oppbljJbjgb7jgacNCmxpYnJhcnkobWFncml0dHIpICMg44OR44Kk44OX5Yem55CG44KS5L2/44GE44GT44Gq44GZ44Gb77yBDQoNCiMgZ2dwbG90MiDjga4gdGhlbWUg44KS44GC44KJ44GL44GY44KB6Kit5a6a44GX44Gm44GK44GPDQp0aGVtZV9zZXQodGhlbWVfbWluaW1hbChiYXNlX3NpemUgPSAxNSkpDQpgYGANCg0KIyDjg4fjg7zjgr/jga7oqq3jgb/ovrzjgb8NCg0K5LuK5Zue5L2/55So44GZ44KL44Gu44Gv6KGG6Zmi6YG444Gr5Ye66aas44GX44Gf5ZCE5YCZ6KOc6ICF44Gu44OH44O844K/44Gg44CCDQoNCjE5OTblubTjgYvjgokyMDE35bm044G+44Gn44Gu44OH44O844K/44GM6Kmw44G+44Gj44Gm44GE44KL44CCDQoNCuODh+ODvOOCv+OBr1vjgZPjgaHjgoldKC4vZGF0YS9Ib3VzZV9vZl9Db3VuY2lsb3JzXzE5OTZfMjAxNy5jc3YpDQoNCmBgYHtyfQ0KZGF0YSA8LSByZWFkX2NzdigiLi9kYXRhL0hvdXNlX29mX0NvdW5jaWxvcnNfMTk5Nl8yMDE3LmNzdiIpICMgMTk5NuW5tO+9njIwMTflubTjgb7jgafjga7ooYbpmaLpgbjjg4fjg7zjgr8NCmBgYA0KDQojIyDjg4fjg7zjgr/lhoXjga7lpInmlbDlkI3jgpLnorroqo3jgZnjgosNCg0K44Gp44KT44Gq5aSJ5pWw44GM44GC44KL44GL6KaL44Gm44G/44KI44GG44CCDQoNCmBgYHtyfQ0KbmFtZXMoZGF0YSkNCmBgYA0KDQrlkITlpInmlbDjgYzmhI/lkbPjgZnjgovjgoLjga7jga/ku6XkuIvjga7jgojjgYbjgavjgarjgaPjgabjgYTjgovjgIINCg0KfOWkieaVsOWQjSAgICB85YaF5a65ICAgIOOAgHzlgpnogIMgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgfA0KfC0tLS0tLS0tLS18LS0tLS0tLS0tLXwtLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLXwNCnx5ZWFyICAgICAgfOWun+aWveW5tCAg44CAfCAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgfA0KfGt1ICAgICAgICB86YO96YGT5bqc55yMICB8ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICB8DQp8a3VuICAgICAgIHzljLrln58gICAg44CAfCAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgfA0KfHN0YXR1cyAgICB854++6IG344GL5ZCm44GLfDAgPSDmlrDkurrjg7vlhYMsIDEgPSDnj77ogbcgICAgICAgICAgICAgICAgfA0KfG5hbWUgICAgICB85ZCN5YmNICAgICAgfCAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgfA0KfHBhcnR5ICAgICB85omA5bGe5pS/5YWaICB844Ot44O844Oe5a2X44Gn44Gu55Wl6KqeICAgICAgICAgICAgICAgICAgICAgIHwNCnxwYXJ0eV9jb2RlfOaJgOWxnuaUv+WFmiAgfOaVsOWtl+OBp+mAmuOBl+eVquWPtyAgICAgICAgICAgICAgICAgICAgICAgIHwNCnxwcmV2aW91cyAgfOW9k+mBuOWbnuaVsCAgfCAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgfA0KfHdsICAgICAgICB85b2T6JC957WQ5p6c44CAfDAgPSDokL3pgbgsIDEgPSDlvZPpgbgsIDIgPSDlvqnmtLvlvZPpgbggICAgICB8DQp8dm90ZXNoYXJlIHzlvpfnpajnjocgICAgfOWNmOS9jTogJSAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICB8DQp8YWdlICAgICAgIHzlubTpvaIgICAgICB8ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICB8DQp8bm9jYW5kICAgIHzlgJnoo5zogIXmlbAgIHwgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIHwNCnxyYW5rICAgICAgfOmghuS9jeOAgOOAgOOAgHwgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIHwNCnx2b3RlICAgICAgfOW+l+elqOaVsOOAgOOAgHwgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIHwNCnxlbGlnaWJsZSAgfOacieaoqeiAheaVsCAgfCAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgfA0KfHR1cm5vdXQJIHzmipXnpajnjocgICAgfOWNmOS9jTogJSAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICB8DQp8ZXhwCSAgICAgfOmBuOaMmeiyu+eUqCAgfOWNmOS9jTog5YaGICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgfA0KfGV4cG0gICAgICB86YG45oyZ6LK755So44CAfOWNmOS9jTog55m+5LiH5YaGICAgICAgICAgICAgICAgICAgICAgICAgICB8DQp8dnMJICAgICAgIHzlvpfnpajlibLlkIggIHzlsI/mlbDjgafooajoqJggICAgICAgICAgICAgICAgICAgICAgICAgICAgfA0KfGV4cHB2ICAgICB86YG45oyZ6LK755SoICB85Y2Y5L2NOiDlhobvvIjmnInmqKnogIXkuIDkurrlvZPjgZ/jgorjga7pgbjmjJnosrvnlKjvvIl8DQp8c21kCSAgICAgfOW9k+iQvSAgICAgIHwwID0g6JC96YG4LCAxID0g5b2T6YG4ICAgICAgICAgICAgICAgICAgICB8DQp8cGFydHlfanBuIHzmiYDlsZ7mlL/lhZrjgIB85pel5pys6KqeICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICB8DQoNCiMjIOODh+ODvOOCv+OBruaVtOW9og0KDQrku4rlm57jga/lvpfnpajnjocodm90ZXNoYXJlKeOCkuS9v+OBo+OBpuODkuOCueODiOOCsOODqeODoOOCkuaPj+OBhOOBpuOBhOOBj+OAgg0KDQrnrrHjgbLjgZLlm7Pjga/jg4fjg7zjgr/jga7liIbluIPjgpLnorroqo3jgZnjgovjgZ/jgoHjgavkvb/nlKjjgZnjgovjgIINCg0K5LuK5Zue44Gv6YG45oyZ44OH44O844K/44KS5L2/55So44GZ44KL44Gu44Gn44CB5ZCE5pS/5YWa44Gu5b6X56Wo546HKHZvdGVzaGFyZSnjga7liIbluIPjgpLlj6/oppbljJbjgZfjgabjgb/jgovjgIINCg0KYGBge3J9DQpkYXRhICU8PiUgDQogIHNlbGVjdCh5ZWFyLCBwYXJ0eV9qcG4sIHZvdGVzaGFyZSkgJT4lICMg5L2/55So44GZ44KL5aSJ5pWw44KS5oq95Ye6DQogIGZpbHRlcihwYXJ0eV9qcG4gJWluJSBjKCLlhbHnlKPlhZoiLCAi56S+5rCR5YWaIiwgIuawkeS4u+WFmiIsICLoh6rmsJHlhZoiKSkgJT4lICMg57Ch5Y2Y44Gu44Gf44KB44CB5pS/5YWa44KS57We44KLDQogIGFzLmRhdGEuZnJhbWUoKSAlPiUgIyDkuIDlv5wNCiAgZHJvcF9uYSgpICMgbmHjgpLokL3jgajjgZkNCmBgYA0KDQrjgb7jgZ/jgIEyMDA15bm044Gu6KGG6Zmi6YG444OH44O844K/44KS5Y+v6KaW5YyW44GZ44KL44GT44Go44Go44GZ44KL44CCDQoNCmBgYHtyfQ0KZGF0YV8yMDA1IDwtIGRhdGEgJT4lIA0KICBmaWx0ZXIoeWVhciA9PSAyMDA1KQ0KYGBgDQoNCiMg5pmu6YCa44Gu566x44Gy44GS5ZuzDQoNCnBvaW5044Gv5aSW44KM5YCk44KS6KGo44GZ44CCDQoNCmBgYHtyfQ0KZGF0YV8yMDA1ICU+JSANCiAgZ2dwbG90KGFlcyh4ID0gcGFydHlfanBuLCANCiAgICAgICAgICAgICB5ID0gdm90ZXNoYXJlKSkgKw0KICBnZW9tX2JveHBsb3QoKSArDQogIGxhYnMoeCA9ICIiLCANCiAgICAgICB5ID0gIuW+l+elqOeOhyIsIA0KICAgICAgIHRpdGxlID0gIjIwMDXlubTooYbpmaLpgbg6IOWAmeijnOiAheOBruW+l+elqOeOhyIpIA0KYGBgDQoNCiMg566x44Gu5Lim44Gz5pu/44GIDQoNCueuseOBsuOBkuWbs+OBp+ikh+aVsOOBruOCr+ODqeOCueOCv+OCkuavlOi8g+OBmeOCi+mam+OBr+OAgW1lZGlhbuOBjOWwj+OBleOBhOmghuOBq+S4puOBueOBn+OBu+OBhuOBjOimi+OChOOBmeOBhOOAgg0K44Gf44Gg44CB5qOS44Kw44Op44OV44Go6YGV44Gj44Gm44CBYGZjdF9yZW9kZXIoKWDjga/poIbluo/nmoTjgarmhI/lkbPlkIjjgYTjgpLmjIHjgZ/jgarjgYRmYWN0b3Llnovjgavjga/kvb/jgYjjgarjgYTjgZ/jgoHjgIENCmB0cmFuc2Zvcm0oeCA9IGZhY3Rvcih4ICxsZXZlbHMgPSBjKCJob2dlMSIsICJob2dlMiIsICJob2dlMyIpKSlg44Gn5Lim44Gz5pu/44GI44KS6KGM44GG44CCDQoNCmBgYHtyfQ0KZGF0YV8yMDA1ICU+JSANCiAgdHJhbnNmb3JtKHBhcnR5X2pwbiA9IGZhY3RvcihwYXJ0eV9qcG4gLGxldmVscyA9IGMoIuWFseeUo+WFmiIsICLnpL7msJHlhZoiLCAi5rCR5Li75YWaIiwgIuiHquawkeWFmiIpKSkgJT4lDQogIGdncGxvdChhZXMoeCA9IHBhcnR5X2pwbiwgeSA9IHZvdGVzaGFyZSkpICsNCiAgZ2VvbV9ib3hwbG90KCkgKw0KICBsYWJzKHggPSAiIiwgeSA9ICLlvpfnpajnjociLCB0aXRsZSA9ICIyMDA15bm06KGG6Zmi6YG4OiDlgJnoo5zogIXjga7lvpfnpajnjociKSANCmBgYA0KDQojIOOCr+ODqeOCueOCv+OBlOOBqOOBq+iJsuOCkuS7mOOBkeOCiw0KDQrjgq/jg6njgrnjgr/jgZTjgajjgavoibLjgpLku5jjgZHjgovjgajjgIHjgojjgoroppboqo3mgKfjgYzlkJHkuIrjgZnjgovvvIjjgajmgJ3jgYYuLi7vvInjgIINCmBzY2FsZV9maWxsX21hbnVhbCh2YWx1ZXMgPSBjKCJjb2xvcjEiLCAiY29sb3IyIiwgImNvbG9yMyIsICJjb2xvcjQiKSlg44Gn44CBNOiJsuaMh+WumuOBmeOCjOOBsOiHqueUseOBq+iJsuOCkuS7mOOBkeOCieOCjOOCi+OAgg0KW0dpdGh1Yl0oaHR0cHM6Ly9naXRodWIuY29tL0ZydWl0R3Jhbm9sYS9SX0JveHBsb3Qp44Gu44Os44Od44K444OI44Oq44Gu5Lit44Gr44Kr44Op44O844Oq44K544OI44KS5YWl44KM44Gf44Gu44Gn44CB6IiI5ZGz44Gu44GC44KL5Lq644Gv6YGK44KT44Gn44G/44Gm44CCDQoNCmBgYHtyfQ0KZGF0YV8yMDA1ICU+JSANCiAgdHJhbnNmb3JtKHBhcnR5X2pwbiA9IGZhY3RvcihwYXJ0eV9qcG4gLGxldmVscyA9IGMoIuWFseeUo+WFmiIsICLnpL7msJHlhZoiLCAi5rCR5Li75YWaIiwgIuiHquawkeWFmiIpKSkgJT4lDQogIGdncGxvdChhZXMoeCA9IHBhcnR5X2pwbiwgeSA9IHZvdGVzaGFyZSkpICsNCiAgZ2VvbV9ib3hwbG90KGFlcyhmaWxsID0gcGFydHlfanBuKSwgc2hvdy5sZWdlbmQgPSBGKSArDQogIGxhYnMoeCA9ICIiLCB5ID0gIuW+l+elqOeOhyIsIHRpdGxlID0gIjIwMDXlubTooYbpmaLpgbg6IOWAmeijnOiAheOBruW+l+elqOeOhyIpIA0KYGBgDQoNCiMg5bmz5Z2H5YCk44KS5LuY44GR5Yqg44GI44KLDQoNCuOBn+OBvuOBq3TmpJzlrprjgajjgYvjgZnjgovjgajjgIHjgIzlubPlnYflgKTjgoLkuIDnt5LjgavopovjgZ/jgYTjgarjgYHjgI3jgajmgJ3jgYbjgZPjgajjgoLjgYLjgovjgILjgZ3jga7jgajjgY3jga/ku6XkuIvjga7jgojjgYbjgavjgZnjgozjgbDjgIHlubPlnYflgKTjgoLnorroqo3jgafjgY3jgovjgIINCg0K56S+5rCR5YWa44Gu5bmz5Z2H5YCk44GobWVkaWFu44Gr6ZaL44GN44GM44GC44KL44KI44GG44Gg44CC44KC44GX44GL44GX44Gf44KJ44OS44K544OI44Kw44Op44Og44Gr5q2q44G/44GM44GC44KL44GL44KC44CCDQoNCmBgYHtyfQ0KZGF0YV8yMDA1ICU+JSANCiAgdHJhbnNmb3JtKHBhcnR5X2pwbiA9IGZhY3RvcihwYXJ0eV9qcG4gLGxldmVscyA9IGMoIuWFseeUo+WFmiIsICLnpL7msJHlhZoiLCAi5rCR5Li75YWaIiwgIuiHquawkeWFmiIpKSkgJT4lDQogIGdncGxvdChhZXMoeCA9IHBhcnR5X2pwbiwgeSA9IHZvdGVzaGFyZSkpICsNCiAgZ2VvbV9ib3hwbG90KGFlcyhmaWxsID0gcGFydHlfanBuKSwgc2hvdy5sZWdlbmQgPSBGKSArDQogIGxhYnMoeCA9ICIiLCB5ID0gIuW+l+elqOeOhyIsIHRpdGxlID0gIjIwMDXlubTooYbpmaLpgbg6IOWAmeijnOiAheOBruW+l+elqOeOhyIpICsNCiAgc3RhdF9zdW1tYXJ5KGZ1biA9IG1lYW4sIGdlb20gPSAicG9pbnQiLCBjb2xvciA9ICIjRkM0RTA3IikgDQpgYGANCg0KIyDjg5DjgqTjgqrjg6rjg7Pjg5fjg63jg4Pjg4gNCg0K44OQ44Kk44Kq44Oq44Oz44OX44Ot44OD44OI44KS5LiA57eS44Gr5o+P44GP44GT44Go44Gn44CB44OH44O844K/44Gu5YiG5biD44KS56K66KqN44GX44Gq44GM44KJ6KaB57SE57Wx6KiI6YeP44KS6KaL44KL44GT44Go44GM44Gn44GN44KL44CCDQrnpL7msJHlhZrjga7lvpfnpajnjofjga/lj7PmlrnlkJHjgavoo77ph47jgYzluoPjgYTliIbluIPjgZ/jgoHjgIHlubPlnYflgKTjgahtZWRpYW7jgYzpm6LjgozjgabjgYTjgZ/jgojjgYbjgaDjgIINCuWFseeUo+WFmuOBr+OBguOBvuOCiuODh+ODvOOCv+OBq+OBsOOCieOBpOOBjeOBjOeEoeOBhOOCiOOBhuOBq+imi+OBiOOCi+OAgg0KDQpgYGB7cn0NCmRhdGFfMjAwNSAlPiUgDQogIHRyYW5zZm9ybShwYXJ0eV9qcG4gPSBmYWN0b3IocGFydHlfanBuICxsZXZlbHMgPSBjKCLlhbHnlKPlhZoiLCAi56S+5rCR5YWaIiwgIuawkeS4u+WFmiIsICLoh6rmsJHlhZoiKSkpICU+JQ0KICBnZ3Bsb3QoYWVzKHggPSBwYXJ0eV9qcG4sIHkgPSB2b3Rlc2hhcmUpKSArDQogIGdlb21fdmlvbGluKGFlcyhmaWxsID0gcGFydHlfanBuKSwgYWxwaGEgPSAwLjMsIHNob3cubGVnZW5kID0gRikgKw0KICBnZW9tX2JveHBsb3QoYWxwaGEgPSAuNSwgc2hvdy5sZWdlbmQgPSBGKSArDQogIGxhYnMoeCA9ICIiLCB5ID0gIuW+l+elqOeOhyIsIHRpdGxlID0gIjIwMDXlubTooYbpmaLpgbg6IOWAmeijnOiAheOBruW+l+elqOeOhyIpICsNCiAgc3RhdF9zdW1tYXJ5KGZ1biA9IG1lYW4sIGdlb20gPSAicG9pbnQiLCBjb2xvciA9ICIjRkM0RTA3IikgKw0KICBjb29yZF9mbGlwKCkNCmBgYA0KDQo8SFI+DQoNCuOBk+OBruiomOS6i+OBruOCs+ODvOODieOCkuOBvuOBqOOCgeOBn+OCguOBruOBr1tHaXRodWJdKGh0dHBzOi8vZ2l0aHViLmNvbS9GcnVpdEdyYW5vbGEvUl9Cb3hwbG90KeOBq+OBguOCiuOBvuOBmeOAgg0K</div>
 
 
 </div>
